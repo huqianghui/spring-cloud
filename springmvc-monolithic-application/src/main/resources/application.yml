@@ -1,0 +1,19 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      host: localhost
+      database: piggymetrics
+
+server:
+  port: 10000
+
+management: #actuator
+  server:
+    port: 10001
+  endpoints:
+    enable: true
+    web:
+      exposure:
+        include: "*"

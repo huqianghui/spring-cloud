@@ -1,0 +1,9 @@
+server:
+  port: 8100
+
+management: #actuator
+  endpoints:
+    enable: true
+    web:
+      exposure:
+        include: "*"

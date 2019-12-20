@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      database: piggymetrics
+server:
+  servlet:
+    context-path: /uaa
+  port: 5000
+
+management: #actuator
+  servlet:
+      context-path: /uaa
