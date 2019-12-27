@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: gateway
+  main:
+    allow-bean-definition-overriding: true
+zuul:
+  ribbonIsolationStrategy: THREAD #设置Hystrix隔离策略为线程池
+  threadPool:
+    useSeparateThreadPools: true #每个路由使用独立的线程池

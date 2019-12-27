@@ -5,13 +5,14 @@ spring:
     mongodb:
       host: localhost
       database: piggymetrics
+      min-connections-per-hos: 10
+      max-connections-per-host: 100
+      threads-allowed-to-block-for-connection-multiplier: 5
 
 server:
   port: 10000
 
 management: #actuator
-  server:
-    port: 10001
   endpoints:
     enable: true
     web:

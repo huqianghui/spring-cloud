@@ -19,7 +19,7 @@ import java.util.Date;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-	private final Logger log = LoggerFactory.getLogger(getClass());
+	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -29,27 +29,15 @@ public class AccountServiceImpl implements AccountService {
 	@Autowired
 	private AccountRepository repository;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Account findByName(String accountName) {
-		Assert.hasLength(accountName);
-
-		//TODO
-
-		Account temp = new Account();
-		temp.setName(accountName);
-		return temp;
-		//return repository.findByName(accountName);
+		Assert.isTrue(accountName != null,"The account name is null.");
+		return repository.findByName(accountName);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Account create(User user) {
-		log.debug("user :" + user);
+		LOGGER.debug("user :" + user);
 
 		Account existing = repository.findByName(user.getUsername());
 		Assert.isNull(existing, "account already exists: " + user.getUsername());
@@ -72,18 +60,15 @@ public class AccountServiceImpl implements AccountService {
 
 		repository.save(account);
 
-		log.info("new account has been created: " + account.getName());
+		LOGGER.info("new account has been created: " + account.getName());
 
 		return account;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void saveChanges(String name, Account update) {
 
-		log.debug("name:" + name);
+		LOGGER.debug("name:" + name);
 		Account account = repository.findByName(name);
 		Assert.notNull(account, "can't find account with name " + name);
 
@@ -94,7 +79,7 @@ public class AccountServiceImpl implements AccountService {
 		account.setLastSeen(new Date());
 		repository.save(account);
 
-		log.debug("account {} changes has been saved", name);
+		LOGGER.debug("account {} changes has been saved", name);
 
 	}
 }

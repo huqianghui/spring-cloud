@@ -872,7 +872,7 @@ function launchStatistic() {
 function jsonDataSave() {
     if (global.savePermit) {
         $.ajax({
-            url: 'accounts/current?username=' + getUserNameFromStorage(),
+            url: 'accounts/current',
             datatype: 'json',
             type: "put",
             contentType: "application/json",

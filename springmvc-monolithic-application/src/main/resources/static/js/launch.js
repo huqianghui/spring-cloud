@@ -38,16 +38,16 @@ function requestOauthToken(username, password) {
 	return success;
 }
 
+function getUserNameFromStorage() {
+    return localStorage.getItem('username');
+}
+
 function getOauthTokenFromStorage() {
 	return localStorage.getItem('token');
 }
 
-function getUserNameFromStorage() {
-	return localStorage.getItem("username");
-}
-
 function removeOauthTokenFromStorage() {
-	localStorage.removeItem("username")
+	localStorage.removeItem('username');
     return localStorage.removeItem('token');
 }
 
@@ -58,11 +58,12 @@ function removeOauthTokenFromStorage() {
 function getCurrentAccount() {
 
 	var token = getOauthTokenFromStorage();
+	var username =getUserNameFromStorage();
 	var account = null;
 
 	if (token) {
 		$.ajax({
-			url: 'accounts/current?username=' + getUserNameFromStorage(),
+			url: 'accounts/current?username=' + username,
 			datatype: 'json',
 			type: 'get',
 			headers: {'Authorization': 'Bearer ' + token},

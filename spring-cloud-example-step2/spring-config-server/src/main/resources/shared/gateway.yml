@@ -1,0 +1,40 @@
+zuul:
+  ignoredServices: '*'
+  host:
+    connect-timeout-millis: 300000
+    socket-timeout-millis: 300000
+  routes:
+    auth-service:
+        path: /oauth/**
+        serviceId: auth-service
+        stripPrefix: false
+        sensitiveHeaders:
+    account-service:
+        path: /accounts/**
+        serviceId: account-service
+        stripPrefix: false
+        sensitiveHeaders:
+security:
+  oauth2:
+    client:
+      clientId: gateway
+      accessTokenUri: http://localhost:5000/oauth/token
+      grant-type: client_credentials
+      scope: server
+    resource:
+      user-info-uri: http://localhost:5000/users/current
+
+server:
+  port: 4000
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 300000
+
+ribbon:
+  ReadTimeout: 300000
+  ConnectTimeout: 300000
