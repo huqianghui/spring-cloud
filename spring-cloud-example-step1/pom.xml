@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.seattle.msready</groupId>
@@ -12,9 +12,11 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.7.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
+		<!-- lookup parent from repository -->
 	</parent>
 
+	<!--START Define SpringCloud version and dependency -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring-cloud.version>Greenwich.SR3</spring-cloud.version>
@@ -32,6 +34,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<!--END Define SpringCloud version and dependency -->
 
 	<repositories>
 		<repository>
@@ -43,6 +46,7 @@
 		</repository>
 	</repositories>
 
+	<!--START Define public dependency -->
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -66,7 +70,9 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+	<!--END Define public dependency -->
+
+	<!--START Define function modules -->
 	<modules>
 		<module>gateway</module>
 		<module>auth-service</module>
@@ -74,6 +80,7 @@
 		<module>spring-config-server</module>
 		<module>eureka-server</module>
 	</modules>
+	<!--END Define function modules -->
 
 	<build>
 		<plugins>
