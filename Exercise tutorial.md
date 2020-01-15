@@ -31,15 +31,67 @@ java -jar .\account-service.jar
 
 3. Build and run the application, open browser to testify the webpage
 
+Notice：SpringBoot 自带 Tomcat，应用运行于 Tomcat 中
 
 # Exercise #2 Remode the SpringMVC app to SpringCloud
-1)	Replace the original code by using exercise #2 sample code.
-2)	Change the configuration and modify front end code following instruction.
-3)	Build and run the microservices project by using Maven
-4)	Open the browser to testify the application
-5)	Open the browser to check the local SpringCloud dashboard
-6)	Add a new microservice for this project
-7)	Build and run again to check success
+
+1)Replace the original code by using exercise #2 sample code.
+
+打开 Ex2 的脚手架文件作为初始框架，以后可以从 Spring.io 生成脚手架工程
+Notice：这里的 annotation 是 SpringCloud，不是 SpringBoot 了
+配置 Parent Pom.xml 增加 function model
+在 resource 下修改 application.yml
+
+拆分 Authoration 服务：
+
+1. 复制一个工程作为 Auth-Service
+2. 修改 Pom.xml 增加 MongoDB 依赖
+3. 从 SpringMVC 应用中 copy 对应代码
+4. 修改 Pom.xml 增加 Sping Security 相关依赖
+5. 修改 domain/User.java 增加 import
+6. 新建 service/ feignClient 组件和 resttemplate 调用 account-service
+7. 修改 config/ OAuthConfig 代码
+8. 在启动类上增加 feignclient 声明
+9. 修改 spring config server/auth-service.yml, 增加端口定义
+
+从 Account-Service：
+
+1. 删除 config 文件夹
+2. 修改 spring config server/account-service.yml
+
+2) Change the configuration and modify front end code following instruction.
+   拆分前后端
+
+1. 增加 gateway 作为前端静态资源部署（以后建议使用 ngix 部署）
+2. 修改 Pom 增加 Spring Security 依赖
+3. 在 src/main/新建 Config 文件夹，把 ResourceServerConfig 类拷贝到 config 目录下，修改增加一些 rest 相关的 bean
+4. 在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices.java
+5. 修改启动类，增加申明
+6. 在 spring config server 的 application.yml，增加 gateway 的配置为 gateway.yaml
+
+3) Build and run the microservices project by using Maven
+   、、、
+   cd step2
+   mvn clean install
+   、、、
+   按顺序启动服务
+   cd 到对应服务的 target 目录下
+   java -jar
+
+Spring Config Server
+Eureka-server
+auth-service
+account-service
+gateway
+
+4. Open the browser to testify the application
+   localhost:10000
+
+5. Open the browser to check the local SpringCloud dashboard
+   check eureka-service
+   localhost:
+
+Best practice, add Spring-Boot Admin
 
 # 对已经存在单体应用进行微服务拆分步骤
 
@@ -837,11 +889,12 @@ ribbon:
 ```
 
 # Exercise #3 Deploy to Azure SpringCloud
-1)	Replace the code by using exercise #3 sample code.
-2)	Delete the original config server code.
-3)	Create Azure SpringCloud by using Azure Pass Account if they don’t have an active Azure subscription
-4)	Deploy services Jar to Azure SpringCloud by using Azure CLI
-5)	Check the services status on Azure SpringCloud portal
-6)	Create Azure Website
-7)	Modify front-end configuration and deploy to Azure Website.
-8)	Open the browser to testify the application 
+
+1. Replace the code by using exercise #3 sample code.
+2. Delete the original config server code.
+3. Create Azure SpringCloud by using Azure Pass Account if they don’t have an active Azure subscription
+4. Deploy services Jar to Azure SpringCloud by using Azure CLI
+5. Check the services status on Azure SpringCloud portal
+6. Create Azure Website
+7. Modify front-end configuration and deploy to Azure Website.
+8. Open the browser to testify the application
