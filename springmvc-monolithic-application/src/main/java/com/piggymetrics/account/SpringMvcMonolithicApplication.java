@@ -6,10 +6,10 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 
 @SpringBootApplication
 @EnableOAuth2Client
-public class AccountMonolithicApplication {
+public class SpringMvcMonolithicApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AccountMonolithicApplication.class, args);
+		SpringApplication.run(SpringMvcMonolithicApplication.class, args);
 	}
 
 }
