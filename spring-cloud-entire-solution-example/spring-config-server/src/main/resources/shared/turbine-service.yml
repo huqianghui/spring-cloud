@@ -1,5 +1,0 @@
-server:
-  port: 8769
-turbine:
-  app-config: gateway
-  combine-host-port: true
