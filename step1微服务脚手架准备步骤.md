@@ -39,7 +39,7 @@
 
 ### 链路监控zipkin
 
-![zipkin-dashboard](./images/turbine-dashboard.png)
+![zipkin-dashboard](./images/zipkin-dashboard.png)
 
 ![zipkin-record-detail](./images/zipkin-record-detail.png)
 
