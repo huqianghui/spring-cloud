@@ -5,9 +5,9 @@ it uses a Spring Cloud Service Registry and a Spring Cloud Config Server which a
 
 ## add azure spring cloud maven dependency
 
-add below dependecy on the parent pom file.
+add below dependecy on the parent pom file,and remove the spring-config-server and eureka-server modules.
 
-```yaml
+```xml
 <dependency>
     <groupId>com.microsoft.azure</groupId>
     <artifactId>spring-cloud-starter-azure-spring-cloud-client</artifactId>
@@ -15,7 +15,9 @@ add below dependecy on the parent pom file.
 </dependency>
 ```
 
-***rebuild and deploy all the maven projects**
+![deleteBelowTwoModules](./images/deleteTwoModule.png)
+
+***rebuild and install all the maven projects**
 
 ## create azure spring cloud cluster
 
@@ -54,14 +56,13 @@ az extension add --name spring-cloud
 - Click on "Azure Spring Cloud" and then on "Create".
 - Select your subscription, resource group name, name of the service and location.
 
-![Cluster configuration](media/02-creation-details.png)
+![Cluster configuration](./images/createAzureSpringCloudDetail.png)
 
 - Click on "Next : Diagnostic Setting" to go to the next screen.
-- Here you can either select an existing "Log Analytics workspace" or create a new one. Create a new one, and we will configure it later in [03 - Configure application logs](../03-configure-application-logs/README.md).
+- Here you can either select an existing "Log Analytics workspace" or create a new one. Create a new one, and we will configure it later in [Configure application logs](../03-configure-application-logs/README.md).
+- It cost much time.
 
-![Configure Log Analytics](media/03-creation-log-analytics.png)
-
-![Create new Log Analytics](media/04-create-new-log-analytics.png)
+![disableTrace](./images/disableTrace.png)
 
 - Once everything is validated, the cluster can be created.
 
@@ -79,37 +80,71 @@ az configure --defaults spring-cloud=<service instance name>
 ### Configure Azure Spring Cloud to access the Git repository
 
 - Go to the [the Azure portal](https://portal.azure.com/?WT.mc_id=azurespringcloud-github-judubois).
+- remove eureka server config information.
+- remove application name and server port configurations.
 - Go to the overview page of your Azure Spring Cloud server, and select "Config server" in the menu
 - Configure the repository we previously created:
-  - Add the repository URL, for example `https://github.com/huqianghui/spring-cloud.git`
+  - Add the repository URL, for example `https://github.com/huqianghui/azure-spring-cloud-demo-config.git`
   - Click on `Authentication` and select `public`
 - Click on "Apply" and wait for the operation to succeeed
+- Upload the config files to the github server. Here we just use the github as spring cloud's storage repostory.
 
-![Spring Cloud config server](media/02-config-server.png)
+![Spring Cloud config server](./images/configGitServer.png)
 
-### push all config file to the git server.
+### push all config file to the git server
 
-### deploy local spring cloud applitions to azure spring cloud.
+![gitRepositoryConfigFiles](./images/configFiles.png)
+
+### deploy local spring cloud applitions to azure spring cloud
+
+![creatApps](./images/createTheThreeApps.png)
+
+You can now  send the project jars to Azure Spring Cloud:
 
 ```bash
-az spring-cloud app create -n spring-cloud-microservice
+az spring-cloud app deploy -n gateway --jar-path ./gateway/target/gateway-1.0-SNAPSHOT.jar
+
+az spring-cloud app deploy -n account-service --jar-path ./account-service/target/account-service-1.0-SNAPSHOT.jar
+
+az spring-cloud app deploy -n auth-service --jar-path ./auth-service/target/auth-service-1.0-SNAPSHOT.jar
+
 ```
 
-You can now build your "spring-cloud-microservice" project and send it to Azure Spring Cloud:
-
-```bash
-./mvnw clean package -DskipTests -Pcloud
-az spring-cloud app deploy -n spring-cloud-microservice --jar-path target/demo-0.0.1-SNAPSHOT.jar
-```
+![azureSpringCloudDeployment](./images/azureSpringCloudDeployment.png)
 
 ### Test the project in the cloud
 
 Go to [the Azure portal](https://portal.azure.com/?WT.mc_id=azurespringcloud-github-judubois):
 
 - Look for your Azure Spring Cloud cluster in your resource group
-- Go to "App Management"
-  - Verify that `spring-cloud-microservice` has a `Discovery status` which says `UP(1),DOWN(0)`. This shows that it is correctly registered in Spring Cloud Service Registry.
-  - Select `spring-cloud-microservice` to have more information on the microservice.
-- Copy/paste the "Test Endpoint" that is provided.
 
-You can now use cURL again to test the `/actuator/info` endpoint.
+- Go to "App Management"
+  - Verify that `gateway,account-service,auth-service` has a `Discovery status` which says `UP(1),DOWN(0)`. This shows that it is correctly registered in Spring Cloud Service Registry.
+  - Select `gateway,account-service,auth-service` to have more information on the microservice.
+
+It takes a few minutes to finish deploying the applications. To confirm that they have deployed, go to the Apps blade in the Azure portal. You should see a line each of the three applications.
+
+- assign url to auth-server
+![assignUrl](./images/assignAuthUrl.png)
+
+- change the auth server address in the gateway.application
+![changeAuthConfig](./images/changeAuthServerConfig.png)
+
+- truobe-shooting: If you enable the diagnostic, you can watch the application log.
+
+```sql
+
+AppPlatformLogsforSpring
+| where AppName == 'auth-service' and Log contains "Caused by"
+| order by TimeGenerated  desc nulls last 
+| limit 50
+
+```
+
+- monitor the app status, if they are running, then you can test it.
+
+![appsStatus](./images/appsStatus.png)
+
+- Assign a public endpoint to the gateway
+
+![appsStatus](./images/testPoint.png)
