@@ -35,7 +35,7 @@ Basiclly, the LODS provide you a virtual machince which has been pre-configured 
 Press Win+R to open the command run widows, and input **Powershell** to open the terminal windows.
 
 - Notice: If you are using the LODS VM, you can use the top-left **Flash** button to send the Win+R command.
-  ![LODS WinR](.\images\Ex1-WinR.jpg)
+  ![LODS WinR](./images/Ex1-WinR.jpg)
 
 Input the follwing command to check your environment's ready status.
 
@@ -48,7 +48,7 @@ mvn -version
 ```
 
 If everything works well, you should see the result similar to this:
-![Environment check](.\images\Ex1-EnvCheck.jpg)
+![Environment check](./images/Ex1-EnvCheck.jpg)
 
 - Notice: If you cannot use the _mvn_ command, following this link to install Maven and config the system environment variable path: https://maven.apache.org/install.html
 
@@ -69,7 +69,7 @@ mvn clean install
 ```
 
 If you see the **BUILD SUCCESS** means you have built the code successfully.
-![Ex1 Maven Build](.\images\Ex1-MvnBuild.jpg)
+![Ex1 Maven Build](./images/Ex1-MvnBuild.jpg)
 
 After build process, the compiled files will be in the **target** fold. So before we run the application, we need to change the path to the target fold.
 
@@ -84,10 +84,10 @@ java -jar .\springmvc-monolithic-application-1.0-SNAPSHOT.jar
 ```
 
 When you see below output, means your applicaiton has launched successfully.
-![Ex1-AppRun](.\images\Ex1-AppRun.jpg)
+![Ex1-AppRun](./images/Ex1-AppRun.jpg)
 
 You may notice the applicaiton's port is _10000_. So open your browers, and open http://localhost:10000 to testify your applicaiton.
-![Ex1-AppScreen](.\images\Ex1-AppScreen.jpg)
+![Ex1-AppScreen](./images/Ex1-AppScreen.jpg)
 
 Now, just create a new account to try this applicaiton and analysis its functions.
 
