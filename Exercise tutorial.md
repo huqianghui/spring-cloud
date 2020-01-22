@@ -59,7 +59,7 @@ java -jar .\account-service.jar
 
 3. Build and run the application, open browser to testify the webpage
 
-Notice：The SpringBoot with embeded Tomcat，the current application is running in Tomcat.
+Notice：The SpringBoot with embeded Tomcat，the current application is running in the embeded tomcat.
 
 ---
 
