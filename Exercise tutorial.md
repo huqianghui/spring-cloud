@@ -304,7 +304,7 @@ server:
 
 ### 1. 复制一个工程作为 Auth-Service，从 SpringMVC 应用中 copy 对应代码
 
-### 2. 修改 Pom.xml 增加 MongoDB 依赖
+### 2. 修改 Pom.xml 增加 Sping Security 相关依赖
 
 ```xml
 <dependencies>
@@ -330,8 +330,6 @@ server:
     </dependency>
 </dependencies>
 ```
-
-### 3. 修改 Pom.xml 增加 Sping Security 相关依赖
 
 ### 4. 修改 domain/User.java 增加 import
 
