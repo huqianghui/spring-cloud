@@ -93,7 +93,7 @@ Now, just create a new account to try this applicaiton and analysis its function
 
 - If you are joining an on-site Lab, please raise your hand so that we know you have complete the Exercise #1. Congrats!
 
-- Notice：You may wonder, we did not install any application server like Tomcat in this lab. So how could the application running successfully? In fact, we use SpringBoot to initialize this SpringMVC application. SpringBoot have pre-configured the Tomcat, so when you launch the application, it will start a single Tomcat server and deploy your application.
+- Notice：You may wonder, we did not install any application server like Tomcat in this lab. So how could the application running successfully? In fact, we use SpringBoot to initialize this SpringMVC application. SpringBoot have pre-configured embeded Tomcat, so when you launch the application, it will start a embeded Tomcat server and deploy your application.
 
 ## ===
 
@@ -338,7 +338,7 @@ server:
 
 ### 1. 复制一个工程作为 Auth-Service，从 SpringMVC 应用中 copy 对应代码
 
-### 2. 修改 Pom.xml 增加 MongoDB 依赖
+### 2. 修改 Pom.xml 增加 Sping Security 相关依赖
 
 ```xml
 <dependencies>
@@ -365,11 +365,13 @@ server:
 </dependencies>
 ```
 
-### 3. 修改 Pom.xml 增加 Sping Security 相关依赖
+### 4. modify domain/User.java and add related packages import
 
-### 4. 修改 domain/User.java 增加 import
+**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/domain/User.java_**
 
-```java
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.domain;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -385,56 +387,61 @@ private String password;
 
 @Override
 public String getPassword() {
-    return password;
+return password;
 }
 
 @Override
 public String getUsername() {
-    return username;
+return username;
 }
 
 @Override
 public List<GrantedAuthority> getAuthorities() {
-    return null;
+return null;
 }
 
 public void setUsername(String username) {
-    this.username = username;
+this.username = username;
 }
 
 public void setPassword(String password) {
-    this.password = password;
+this.password = password;
 }
 
 @Override
 public boolean isAccountNonExpired() {
-    return true;
+return true;
 }
 
 @Override
 public boolean isAccountNonLocked() {
-    return true;
+return true;
 }
 
 @Override
 public boolean isCredentialsNonExpired() {
-    return true;
+return true;
 }
 
 @Override
 public boolean isEnabled() {
-    return true;
+return true;
 }
 }
-```
+</code></pre>
+
+</details>
 
 ### 5. 新建 service/ feignClient 组件和 resttemplate 调用 account-service
 
+**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/UserServiceClient.java_**
+
 需要远程调用 account-service 的用户信息，创建一个 feignClient
 
-```java
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.service.security;
-
 import com.seattle.msready.auth.domain.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -450,12 +457,17 @@ public interface UserServiceClient {
 User getUserByName(@RequestParam("username") String username);
 
 }
-```
+</code></pre>
 
-因为用户信息是存放在 account-service 服务中的，所以用户的获取需要通过 rest 替换 DB 查找
-所以新建一个 RestUserDetailsService
+</details>
 
-```java
+### 6. 因为用户信息是存放在 account-service 服务中的，所以用户的获取需要通过 rest 替换 DB 查找所以新建一个 RestUserDetailsService
+
+**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/RestUserDetailsService.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.service.security;
 
 import com.seattle.msready.auth.domain.User;
@@ -477,12 +489,19 @@ public class RestUserDetailsService implements UserDetailsService {
 
         return remoteUser;
     }
+
 }
-```
+</code></pre>
 
-### 7. 在启动类上增加 feignclient 声明
+</details>
 
-```java
+### 7. 在启动类上增加 feignclient 声明@EnableFeignClients
+
+**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/AuthApplication.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth;
 
 import org.springframework.boot.SpringApplication;
@@ -496,18 +515,23 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 public class AuthApplication {
 
 public static void main(String[] args) {
-    SpringApplication.run(AuthApplication.class, args);
+SpringApplication.run(AuthApplication.class, args);
 }
 
 }
+</code></pre>
 
-```
+</details>
 
 ### 8. 修改 config/ OAuthConfig 代码
 
 把 OAuth2AuthorizationConfig 和 WebSecurityConfig 拷贝过来，做相应的修改
 
-```java
+**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.config;
 
 import com.seattle.msready.auth.service.security.RestUserDetailsService;
@@ -519,7 +543,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -549,10 +572,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-}
-```
 
-```java
+}
+</code></pre>
+
+</details>
+
+**_tips: you copy it from ./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.config;
 
 import com.seattle.msready.auth.service.security.RestUserDetailsService;
@@ -608,7 +638,9 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     }
 
 }
-```
+</code></pre>
+
+</details>
 
 ### 9. 修改 spring config server/auth-service.yml, 增加端口定义
 
@@ -617,7 +649,7 @@ server:
   port: 5000
 ```
 
-## Task6 Change the configuration and modify front end code following instruction.
+## Task6 Change the configuration and modify front end code following instruction
 
 ### 1. 增加 gateway 作为前端静态资源部署（以后建议使用 ngix 部署）
 
@@ -654,9 +686,12 @@ server:
 ### 3. 在 src/main/新建 Config 文件夹，把 ResourceServerConfig 类拷贝到 config 目录下，修改增加一些 rest 相关的 bean
 
 因为作为 resourceServer 的 gateway 需要和认证服务远程调用，所以需要增加一些 rest 相关的 bean。
-完整代码如下：
 
-```java
+**_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.gateway.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -707,14 +742,21 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers("/","/favicon.ico","/js/**","/css/**","/fonts/**","/images/**","/*.html").permitAll()
                 .anyRequest().authenticated();
     }
+
 }
-```
+</code></pre>
+
+</details>
 
 ### 4. 在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices.java
 
 在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices
 
-```java
+**_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/CustomUserInfoTokenServices.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.gateway.config;
 
 import org.apache.commons.logging.Log;
@@ -734,14 +776,14 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 import org.springframework.security.oauth2.provider.token.ResourceServerTokenServices;
 
-import java.util.*;
+import java.util.\*;
 
 public class CustomUserInfoTokenServices implements ResourceServerTokenServices {
 
 protected final Log logger = LogFactory.getLog(getClass());
 
 private static final String[] PRINCIPAL_KEYS = new String[] { "user", "username",
-        "userid", "user_id", "login", "id", "name" };
+"userid", "user_id", "login", "id", "name" };
 
 private final String userInfoEndpointUrl;
 
@@ -754,57 +796,57 @@ private String tokenType = DefaultOAuth2AccessToken.BEARER_TYPE;
 private AuthoritiesExtractor authoritiesExtractor = new FixedAuthoritiesExtractor();
 
 public CustomUserInfoTokenServices(String userInfoEndpointUrl, String clientId) {
-    this.userInfoEndpointUrl = userInfoEndpointUrl;
-    this.clientId = clientId;
+this.userInfoEndpointUrl = userInfoEndpointUrl;
+this.clientId = clientId;
 }
 
 public void setTokenType(String tokenType) {
-    this.tokenType = tokenType;
+this.tokenType = tokenType;
 }
 
 public void setRestTemplate(OAuth2RestOperations restTemplate) {
-    this.restTemplate = restTemplate;
+this.restTemplate = restTemplate;
 }
 
 public void setAuthoritiesExtractor(AuthoritiesExtractor authoritiesExtractor) {
-    this.authoritiesExtractor = authoritiesExtractor;
+this.authoritiesExtractor = authoritiesExtractor;
 }
 
 @Override
 public OAuth2Authentication loadAuthentication(String accessToken)
-        throws AuthenticationException, InvalidTokenException {
-    Map<String, Object> map = getMap(this.userInfoEndpointUrl, accessToken);
-    if (map.containsKey("error")) {
-        this.logger.debug("userinfo returned error: " + map.get("error"));
-        throw new InvalidTokenException(accessToken);
-    }
-    return extractAuthentication(map);
+throws AuthenticationException, InvalidTokenException {
+Map<String, Object> map = getMap(this.userInfoEndpointUrl, accessToken);
+if (map.containsKey("error")) {
+this.logger.debug("userinfo returned error: " + map.get("error"));
+throw new InvalidTokenException(accessToken);
+}
+return extractAuthentication(map);
 }
 
 private OAuth2Authentication extractAuthentication(Map<String, Object> map) {
-    logger.debug("map:" + map);
-    Object principal = getPrincipal(map);
-    OAuth2Request request = getRequest(map);
-    List<GrantedAuthority> authorities = this.authoritiesExtractor
-            .extractAuthorities(map);
-    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-            principal, "N/A", authorities);
-    token.setDetails(map);
-    return new OAuth2Authentication(request, token);
+logger.debug("map:" + map);
+Object principal = getPrincipal(map);
+OAuth2Request request = getRequest(map);
+List<GrantedAuthority> authorities = this.authoritiesExtractor
+.extractAuthorities(map);
+UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+principal, "N/A", authorities);
+token.setDetails(map);
+return new OAuth2Authentication(request, token);
 }
 
 private Object getPrincipal(Map<String, Object> map) {
-    for (String key : PRINCIPAL_KEYS) {
-        if (map.containsKey(key)) {
-            return map.get(key);
-        }
-    }
-    return "unknown";
+for (String key : PRINCIPAL_KEYS) {
+if (map.containsKey(key)) {
+return map.get(key);
+}
+}
+return "unknown";
 }
 
 @SuppressWarnings({ "unchecked" })
 private OAuth2Request getRequest(Map<String, Object> map) {
-    Map<String, Object> request = (Map<String, Object>) map.get("oauth2Request");
+Map<String, Object> request = (Map<String, Object>) map.get("oauth2Request");
 
     String clientId = (String) request.get("clientId");
     Set<String> scope = new LinkedHashSet<>(request.containsKey("scope") ?
@@ -812,48 +854,54 @@ private OAuth2Request getRequest(Map<String, Object> map) {
 
     return new OAuth2Request(null, clientId, null, true, new HashSet<>(scope),
             null, null, null, null);
+
 }
 
 @Override
 public OAuth2AccessToken readAccessToken(String accessToken) {
-    throw new UnsupportedOperationException("Not supported: read access token");
+throw new UnsupportedOperationException("Not supported: read access token");
 }
 
 @SuppressWarnings({ "unchecked" })
 private Map<String, Object> getMap(String path, String accessToken) {
-    this.logger.debug("Getting user info from: " + path);
-    try {
-        logger.debug("accessToken: " + accessToken);
-        OAuth2RestOperations restTemplate = this.restTemplate;
-        if (restTemplate == null) {
-            BaseOAuth2ProtectedResourceDetails resource = new BaseOAuth2ProtectedResourceDetails();
-            resource.setClientId(this.clientId);
-            restTemplate = new OAuth2RestTemplate(resource);
-            this.restTemplate= restTemplate;
-        }
-        OAuth2AccessToken existingToken = restTemplate.getOAuth2ClientContext()
-                .getAccessToken();
-        if (existingToken == null || !accessToken.equals(existingToken.getValue())) {
-            DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken(
-                    accessToken);
-            token.setTokenType(this.tokenType);
-            restTemplate.getOAuth2ClientContext().setAccessToken(token);
-        }
-        return restTemplate.getForEntity(path, Map.class).getBody();
-    }
-    catch (Exception ex) {
-        this.logger.info("Could not fetch user details: " + ex.getClass() + ", "
-                + ex.getMessage());
-        return Collections.<String, Object>singletonMap("error",
-                "Could not fetch user details");
-    }
+this.logger.debug("Getting user info from: " + path);
+try {
+logger.debug("accessToken: " + accessToken);
+OAuth2RestOperations restTemplate = this.restTemplate;
+if (restTemplate == null) {
+BaseOAuth2ProtectedResourceDetails resource = new BaseOAuth2ProtectedResourceDetails();
+resource.setClientId(this.clientId);
+restTemplate = new OAuth2RestTemplate(resource);
+this.restTemplate= restTemplate;
+}
+OAuth2AccessToken existingToken = restTemplate.getOAuth2ClientContext()
+.getAccessToken();
+if (existingToken == null || !accessToken.equals(existingToken.getValue())) {
+DefaultOAuth2AccessToken token = new DefaultOAuth2AccessToken(
+accessToken);
+token.setTokenType(this.tokenType);
+restTemplate.getOAuth2ClientContext().setAccessToken(token);
+}
+return restTemplate.getForEntity(path, Map.class).getBody();
+}
+catch (Exception ex) {
+this.logger.info("Could not fetch user details: " + ex.getClass() + ", " + ex.getMessage());
+return Collections.<String, Object>singletonMap("error",
+"Could not fetch user details");
 }
 }
-```
+}
+</code></pre>
 
-5. 修改启动类，增加申明
+</details>
 
-```java
+### 5. 修改启动类，增加申明
+
+**_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java_**
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.gateway;
 
 import org.springframework.boot.SpringApplication;
@@ -867,12 +915,14 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 public class GatewayApplication {
 
 public static void main(String[] args) {
-    SpringApplication.run(GatewayApplication.class, args);
+SpringApplication.run(GatewayApplication.class, args);
 }
 }
-```
+</code></pre>
 
-6. 在 spring config server 的 application.yml，增加 gateway 的配置为 gateway.yaml
+</details>
+
+### 6. 在 spring config server 的 application.yml，增加 gateway 的配置为 gateway.yaml
 
 ```yaml
 zuul:
