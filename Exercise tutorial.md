@@ -1,3 +1,31 @@
+# Lab environment
+
+You can complete this lab use your own environment. Please make sure your have an Azure subscription to complete the exercise #3.
+
+## If you plan to use your own environment, please make sure you have setup below requirement:
+
+- Visual Studio Code
+- JDK 8 (https://repos.azul.com/azure-only/zulu/packages/zulu-8/8u232/zulu-8-azure-jdk_8.42.0.23-8.0.232-win_x64.msi)
+- Maven 3.3+ (https://www-eu.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.zip)
+- Azure CLI 2.0.77 (https://aka.ms/installazurecliwindows)
+- Optional: Git
+
+## You can also use the LODS VM as the lab environment.
+
+Basiclly, the LODS provide you a virtual machince which has been pre-configured with development environment. And if you do not have your own Azure subscription, the LODS also provide a free Azure subscription for _one-time_ use, which will be expired after 8 hours or you finish your lab.
+
+- LODS link: https://labondemand.com/LabProfile/62620
+- Once you launch the LODS, you may find the Azure account under the left resource tab.
+
+1. Login with your Microsoft AAD account
+   ![LODS Login](./images/pre-LODSLogin.jpg)
+2. Launch LODS VM environment
+   ![LODS Launch](./images/pre-LODSLaunch.jpg)
+3. Once your VM is ready, you may find the VM login account and a free Azure account under resource tab.
+   ![LODS Resource](./images/pre-LODSResource.jpg)
+
+- Notice: You cannot copy any text from outside into the VM directly. But you can click the T buttun left to the text to input into the VM.
+
 # Exercise #1 Run the SpringMVC app
 
 1. Check development environment by using PowerShell command.
@@ -860,16 +888,11 @@ ribbon:
 ### 1. Launch microservices in order
 
 ```shell
-cd step2
+cd C:\Ready-AZST207T\spring-cloud-example-step2\
 mvn clean install
 ```
 
-按顺序启动服务
-cd 到对应服务的 target 目录下
-
-```shell
-java -jar
-```
+到对应服务的 target 目录下，启动对应服务
 
 - Spring Config Server
 - Eureka-server
@@ -877,9 +900,66 @@ java -jar
 - account-service
 - gateway
 
+#### Spring Config Server
+
+```shell
+cd C:\Ready-AZST207T\spring-cloud-example-step2\
+cd .\spring-config-server\target\
+```
+
+```shell
+java -jar spring-config-server-1.0.0-SNAPSHOT.jar
+```
+
+#### Eureka-server
+
+```shell
+cd C:\Ready-AZST207T\spring-cloud-example-step2\
+cd .\eureka-server\target\
+```
+
+```shell
+java -jar eureka-server-0.0.1-SNAPSHOT.jar
+```
+
+#### auth-service
+
+```shell
+cd C:\Ready-AZST207T\spring-cloud-example-step2\
+cd .\auth-service\target\
+```
+
+```shell
+java -jar auth-service-1.0-SNAPSHOT.jar
+```
+
+#### account-service
+
+```shell
+cd C:\Ready-AZST207T\spring-cloud-example-step2\
+cd .\account-service\target\
+```
+
+```shell
+java -jar account-service-1.0-SNAPSHOT.jar
+```
+
+#### gateway
+
+```shell
+cd C:\Ready-AZST207T\spring-cloud-example-step2\
+cd .\gateway\target\
+```
+
+```shell
+java -jar gateway-1.0-SNAPSHOT.jar
+```
+
 ### 2. Open the browser to testify the application
 
-localhost:10000
+localhost:4000
+
+- Note: You may need to register a new account to login the application.
 
 ### 3. Open the browser to check the local SpringCloud dashboard
 
@@ -888,7 +968,7 @@ localhost:
 
 Best practice, add Spring-Boot Admin
 
-# Exercise #3 Deploy to Azure SpringCloud
+# Exercise #3 Deploy to Azure Spring Cloud
 
 Build a Spring Boot microservice that is cloud-enabled:
 it uses a Spring Cloud Service Registry and a Spring Cloud Config Server which are both managed and supported by Azure Spring Cloud.
