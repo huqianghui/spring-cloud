@@ -331,9 +331,13 @@ server:
 </dependencies>
 ```
 
-### 4. 修改 domain/User.java 增加 import
+### 4. modify domain/User.java and add related packages import
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/domain/User.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.domain;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -390,15 +394,19 @@ public boolean isEnabled() {
     return true;
 }
 }
-```
+</code></pre>
+</details>
 
 ### 5. 新建 service/ feignClient 组件和 resttemplate 调用 account-service
 
+***tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/UserServiceClient.java***
+
 需要远程调用 account-service 的用户信息，创建一个 feignClient
 
-```java
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.service.security;
-
 import com.seattle.msready.auth.domain.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
@@ -414,12 +422,16 @@ public interface UserServiceClient {
 User getUserByName(@RequestParam("username") String username);
 
 }
-```
+</code></pre>
+</details>
 
-因为用户信息是存放在 account-service 服务中的，所以用户的获取需要通过 rest 替换 DB 查找
-所以新建一个 RestUserDetailsService
+### 6. 因为用户信息是存放在 account-service 服务中的，所以用户的获取需要通过 rest 替换 DB 查找所以新建一个 RestUserDetailsService
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/RestUserDetailsService.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.service.security;
 
 import com.seattle.msready.auth.domain.User;
@@ -442,11 +454,16 @@ public class RestUserDetailsService implements UserDetailsService {
         return remoteUser;
     }
 }
-```
+</code></pre>
+</details>
 
-### 7. 在启动类上增加 feignclient 声明
+### 7. 在启动类上增加 feignclient 声明@EnableFeignClients
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/AuthApplication.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth;
 
 import org.springframework.boot.SpringApplication;
@@ -464,14 +481,18 @@ public static void main(String[] args) {
 }
 
 }
-
-```
+</code></pre>
+</details>
 
 ### 8. 修改 config/ OAuthConfig 代码
 
 把 OAuth2AuthorizationConfig 和 WebSecurityConfig 拷贝过来，做相应的修改
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.config;
 
 import com.seattle.msready.auth.service.security.RestUserDetailsService;
@@ -514,9 +535,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 }
-```
+</code></pre>
+</details>
 
-```java
+***tips: you copy it from ./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.auth.config;
 
 import com.seattle.msready.auth.service.security.RestUserDetailsService;
@@ -572,7 +598,8 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
     }
 
 }
-```
+</code></pre>
+</details>
 
 ### 9. 修改 spring config server/auth-service.yml, 增加端口定义
 
@@ -581,7 +608,7 @@ server:
   port: 5000
 ```
 
-## Task6 Change the configuration and modify front end code following instruction.
+## Task6 Change the configuration and modify front end code following instruction
 
 ### 1. 增加 gateway 作为前端静态资源部署（以后建议使用 ngix 部署）
 
@@ -618,9 +645,12 @@ server:
 ### 3. 在 src/main/新建 Config 文件夹，把 ResourceServerConfig 类拷贝到 config 目录下，修改增加一些 rest 相关的 bean
 
 因为作为 resourceServer 的 gateway 需要和认证服务远程调用，所以需要增加一些 rest 相关的 bean。
-完整代码如下：
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.gateway.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -672,13 +702,18 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .anyRequest().authenticated();
     }
 }
-```
+</code></pre>
+</details>
 
 ### 4. 在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices.java
 
 在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/CustomUserInfoTokenServices.java***
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.gateway.config;
 
 import org.apache.commons.logging.Log;
@@ -813,11 +848,17 @@ private Map<String, Object> getMap(String path, String accessToken) {
     }
 }
 }
-```
+</code></pre>
+</details>
 
-5. 修改启动类，增加申明
+### 5. 修改启动类，增加申明
 
-```java
+***tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java***
+
+
+<details>
+<summary><mark><font color=darkred>source code</font></mark></summary>
+<pre><code> 
 package com.seattle.msready.gateway;
 
 import org.springframework.boot.SpringApplication;
@@ -834,9 +875,10 @@ public static void main(String[] args) {
     SpringApplication.run(GatewayApplication.class, args);
 }
 }
-```
+</code></pre>
+</details>
 
-6. 在 spring config server 的 application.yml，增加 gateway 的配置为 gateway.yaml
+### 6. 在 spring config server 的 application.yml，增加 gateway 的配置为 gateway.yaml
 
 ```yaml
 zuul:
