@@ -26,9 +26,18 @@ Basiclly, the LODS provide you a virtual machince which has been pre-configured 
 
 - Notice: You cannot copy any text from outside into the VM directly. But you can click the T buttun left to the text to input into the VM.
 
+===
+
 # Exercise #1 Run the SpringMVC app
 
-1. Check development environment by using PowerShell command.
+## Task1 Check development environment by using PowerShell command.
+
+Press Win+R to open the command run widows, and input **Powershell** to open the terminal windows.
+
+- Notice: If you are using the LODS VM, you can use the top-left **Flash** button to send the Win+R command.
+  ![LODS WinR](.\images\Ex1-WinR.jpg)
+
+Input the follwing command to check your environment's ready status.
 
 ```Powershell
 javac -version
@@ -38,30 +47,55 @@ javac -version
 mvn -version
 ```
 
-How to install Maven: https://maven.apache.org/install.html
+If everything works well, you should see the result similar to this:
+![Environment check](.\images\Ex1-EnvCheck.jpg)
 
-2. Download the sample code from Github repository and open it by using Visual Studio Code
+- Notice: If you cannot use the _mvn_ command, following this link to install Maven and config the system environment variable path: https://maven.apache.org/install.html
 
-Git clone from the repo
+## Task2 Download the sample code and open it by using Visual Studio Code
 
-```
+## Task3 Build and run the application, open browser to testify the webpage
+
+In this exercise, we will use the code in the **springmvc-monolithic-application** fold.
+
+```Powershell
 cd .\springmvc-monolithic-application
 ```
 
-```
+Under this fold, we use Maven command to build the application.
+
+```Powershell
 mvn clean install
 ```
 
-```
+If you see the **BUILD SUCCESS** means you have built the code successfully.
+![Ex1 Maven Build](.\images\Ex1-MvnBuild.jpg)
+
+After build process, the compiled files will be in the **target** fold. So before we run the application, we need to change the path to the target fold.
+
+```Powershell
 cd .\target
-java -jar .\account-service.jar
 ```
 
-3. Build and run the application, open browser to testify the webpage
+Then, we use the *java -jar*command to run this SpringMVC application.
 
-Notice：SpringBoot 自带 Tomcat，应用运行于 Tomcat 中
+```Powershell
+java -jar .\springmvc-monolithic-application-1.0-SNAPSHOT.jar
+```
 
----
+When you see below output, means your applicaiton has launched successfully.
+![Ex1-AppRun](.\images\Ex1-AppRun.jpg)
+
+You may notice the applicaiton's port is _10000_. So open your browers, and open http://localhost:10000 to testify your applicaiton.
+![Ex1-AppScreen](.\images\Ex1-AppScreen.jpg)
+
+Now, just create a new account to try this applicaiton and analysis its functions.
+
+- If you are joining an on-site Lab, please raise your hand so that we know you have complete the Exercise #1. Congrats!
+
+- Notice：You may wonder, we did not install any application server like Tomcat in this lab. So how could the application running successfully? In fact, we use SpringBoot to initialize this SpringMVC application. SpringBoot have pre-configured the Tomcat, so when you launch the application, it will start a single Tomcat server and deploy your application.
+
+## ===
 
 # Exercise #2 Remode the SpringMVC app to SpringCloud
 
