@@ -95,7 +95,7 @@ Now, just create a new account to try this applicaiton and analysis its function
 
 - Notice：You may wonder, we did not install any application server like Tomcat in this lab. So how could the application running successfully? In fact, we use SpringBoot to initialize this SpringMVC application. SpringBoot have pre-configured embeded Tomcat, so when you launch the application, it will start a embeded Tomcat server and deploy your application.
 
-## ===
+===
 
 # Exercise #2 Remode the SpringMVC app to SpringCloud
 
