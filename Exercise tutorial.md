@@ -59,7 +59,7 @@ java -jar .\account-service.jar
 
 3. Build and run the application, open browser to testify the webpage
 
-Notice：SpringBoot 自带 Tomcat，应用运行于 Tomcat 中
+Notice：The SpringBoot with embeded Tomcat，the current application is running in Tomcat.
 
 ---
 
