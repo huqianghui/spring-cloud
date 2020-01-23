@@ -54,6 +54,10 @@ If everything works well, you should see the result similar to this:
 
 ## Task2 Download the sample code and open it by using Visual Studio Code
 
+If you want to practice this lab on your own machine, you can download this lab's code from: https://aka.ms/SpringCloudLab
+
+If you are using the LODS VM, you can find the Lab's code under `C:\AZST207T - Lab Files\Lab Code\`
+
 ## Task3 Build and run the application, open browser to testify the webpage
 
 In this exercise, we will use the code in the **springmvc-monolithic-application** folder.
