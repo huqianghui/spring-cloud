@@ -24,7 +24,7 @@ Basiclly, the LODS provide you a virtual machince which has been pre-configured 
 3. Once your VM is ready, you may find the VM login account and a free Azure account under resource tab.
    ![LODS Resource](https://labimages.blob.core.windows.net/images/pre-LODSResource.jpg)
 
-- Notice: You cannot copy any text from outside into the VM directly. But you can click the T buttun left to the text to input into the VM.
+> **Notice**: You cannot copy any text from outside into the VM directly. But you can click the T buttun left to the text to input into the VM.
 
 ===
 
@@ -34,8 +34,8 @@ Basiclly, the LODS provide you a virtual machince which has been pre-configured 
 
 Press Win+R to open the command run widows, and input **Powershell** to open the terminal windows.
 
-- Notice: If you are using the LODS VM, you can use the top-left **Flash** button to send the Win+R command.
-  ![LODS WinR](https://labimages.blob.core.windows.net/images/Ex1-WinR.jpg)
+> **Notice**: If you are using the LODS VM, you can use the top-left **Flash** button to send the Win+R command.
+> ![LODS WinR](https://labimages.blob.core.windows.net/images/Ex1-WinR.jpg)
 
 Input the follwing command to check your environment's ready status.
 
@@ -50,7 +50,7 @@ mvn -version
 If everything works well, you should see the result similar to this:
 ![Environment check](https://labimages.blob.core.windows.net/images/Ex1-EnvCheck.jpg)
 
-- Notice: If you cannot use the _mvn_ command, following this link to install Maven and config the system environment variable path: https://maven.apache.org/install.html
+> **Notice**: If you cannot use the _mvn_ command, following this link to install Maven and config the system environment variable path: https://maven.apache.org/install.html
 
 ## Task2 Download the sample code and open it by using Visual Studio Code
 
@@ -93,7 +93,7 @@ Now, just create a new account to try this applicaiton and analysis its function
 
 - If you are joining an on-site Lab, please raise your hand so that we know you have complete the Exercise #1. Congrats!
 
-- Notice：You may wonder, we did not install any application server like Tomcat in this lab. So how could the application running successfully? In fact, we use SpringBoot to initialize this SpringMVC application. SpringBoot have pre-configured embeded Tomcat, so when you launch the application, it will start a embeded Tomcat server and deploy your application.
+> **Notice**：You may wonder, we did not install any application server like Tomcat in this lab. So how could the application running successfully? In fact, we use SpringBoot to initialize this SpringMVC application. SpringBoot have pre-configured embeded Tomcat, so when you launch the application, it will start a embeded Tomcat server and deploy your application.
 
 ===
 
@@ -122,9 +122,10 @@ As a microservices framework, Spring Cloud includes the following core component
 - **Services Registry & Discovery**. A dynamic directory that enables client side load balancing and smart routing. In this lab, we will use `Eureka` (https://spring.io/projects/spring-cloud-netflix).
 - **Configuration Server**. A dynamic, centralized configuration management for your decentralized applications. In this lab, we use the native `Spring Cloud Config` (https://spring.io/projects/spring-cloud-config).
 - **Authorization**. Support for single sign on, token relay and token exchange. In this lab, we will use `Spring Security` (https://spring.io/projects/spring-security).
-  ![SpringCloud Arch](https://spring.io/img/homepage/diagram-distributed-systems.svg)
 
-- Notice: Normally, the frontend static resources should be separated from the microservices applicaiton. To easier this lab's process, we will just deploy the static resource in the gateway service. _We do not recommend you to do this in the real case_.
+![SpringCloud Arch](https://spring.io/img/homepage/diagram-distributed-systems.svg)
+
+> **Notice**: Normally, the frontend static resources should be separated from the microservices applicaiton. To easier this lab's process, we will just deploy the static resource in the gateway service. _We do not recommend you to do this in the real case_.
 
 This remodule excercise will include 6 tasks:
 
@@ -135,7 +136,7 @@ This remodule excercise will include 6 tasks:
 5. Modify the frontend resources and add into the gateway service
 6. Build and run the microservices project.
 
-## Task1 Open the microservices quickstart project and define modules
+## Task 1. Open the microservices quickstart project and define modules
 
 Please go to the **Exercise 2** folder, use **Visual Studio Code** to open the project folder.
 
@@ -170,9 +171,9 @@ If you open the **AccountApplication.java** under the .\account-service\src\main
 
 ![springCloudExampleProjects](https://labimages.blob.core.windows.net/images/springCloudExampleProjects.png)
 
-### 1. First, we need to modify the parent **Pom.xml** to define the function modules
+### 1. First, we need to modify the parent **pom.xml** to define the function modules
 
-Open the parent **Pom.xml**, under the **root of this project folder**. As we change to microservice architecture, we need to use the parent Pom.xml to define the denpendence component and their version.
+Open the parent **pom.xml**, under the **root of this project folder**. As we change to microservice architecture, we need to use the parent pom.xml to define the denpendence component and their version.
 
 In this quickstart project, we have configured the dependence for you. You may have a look on what we have changed.
 
@@ -238,28 +239,25 @@ In this quickstart project, we have configured the dependence for you. You may h
 </modules>
 ```
 
-## Task2 Modify the application.yml and shared configration
+## Task 2. Modify the application.yml and shared configration
 
 In the Spring Cloud microservices architecture, we will use shared config server to manage modules' configuration.
 
 Go to the \spring-config-server\resources\ Path, and try to modify the **application.yml** as following:
 
 ```yml
-logging:
-  level:
-    org.springframework.security: INFO
-
-hystrix:
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 300000
-
-feign:
-  hystrix:
-    enabled: true
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/shared
+  profiles:
+    active: native
+server:
+  port: 8888
 
 eureka:
   instance:
@@ -276,32 +274,40 @@ management: #actuator
         include: "*"
 ```
 
-In the **shared** folder, you may find the modules configuration file. Some of them, especially the non-functional modules, we have configured for you. In these yml file, we have defined the service port and authorazition method.
+Under this path, in the **shared** folder, you may find modules' configuration files. Some of them, especially the non-functional modules, we have configured for you. In these yml file, we have defined the service port and authorazition method.
 
-## Task3 Modify the account service's code and add into the microservices project
+## Task 3. Modify the account service's code and add into the microservices project
 
-Spring Boot is the starting point for building all Spring-based applications. Spring Boot is designed to get you up and running as quickly as possible, with minimal upfront configuration of Spring.
+### 1. Copy and modify code from the old monolothic project
 
-用 account-service 作为例子，业务比较简单就是用户注册登陆以及转户数据的记录与统计展示。
+Go to the \account-service\src\main\java\com\seattle\msready\account path, and create the following folders:
 
-- 注册用户
-- 创建账户信息
-- 登出与登录
+- controller
+- domain
+- repository
+- service
 
-在这个例子里面，为了简单和减少依赖性，使用的 mongoDB 的内存数据库。包括配置和 token 等，都使用内存存储。
+As you can see, even we are trying to build a microservices architecture, we still keep MVC model for each microservice project.
 
-### 1. 删除 config 文件夹
+Then, you can copy **Account** related Java file from the Exercise #1 monolithic application into these accout service folders.
+Since we will seperate the authorization and configration as independent microservices, you do not need to copy the old **Security** and **Config** folders' code.
+However, you will need to modify each Java file to **delete** the `security` code. And as we create a new microservice project, you also need to modify the `namespace` in each Java file. Let's take the **AccountController.java** as an example:
 
-用户和账户服务的把 config 配置信息和 security 信息去掉，其余的全部拷贝到目录下面去掉。
-但是需要修改所有的 namespace。最后结果如下图：
+![Ex2-ModifyAccount](https://labimages.blob.core.windows.net/images/Ex2-ModifyAccount.png)
+
+> **Tips**: To speed up this step, you can just copy from the Exercise #2 completion folder into your project.
+
+By complete this step, your account service project should looks like below:
 
 ![accountServiceCodeStructure](https://labimages.blob.core.windows.net/images/accountServiceCodeStructure.png)
 
-### 2. 修改 pom.xml, maven 依赖中增加内存 mongoDB 相关的依赖
+> **Notice**: In this lab, we have provide you a quickstart project. For your future projects, you may use Spring Boot to initialize your microservices project. Spring Boot is the starting point for building all Spring-based applications. Spring Boot is designed to get you up and running as quickly as possible, with minimal upfront configuration of Spring.
 
-```shell
-cd .\account-service\
-```
+### 2. Modify the microservice's pom.xml
+
+In the old monolithic application, we use the memorized MongoDB as the datebase. After we depart the app into microservices, we need to config each microservice have access to the DB. So we need to modify each pom.xml of microservices to add MongoDB dependence.
+
+Open the **pom.xml** under the _account-service_ root folder. Check and modify to add dependencies as below:
 
 ```xml
 <profiles>
@@ -341,24 +347,31 @@ cd .\account-service\
     </dependencies>
 ```
 
-### 3. Define service port
+### 3. Define the service port
 
-```shell
-cd .\spring-config-server\resources\shared\
-```
+We are almost complete the Account service remodel. The last thing is define the service port.
+As we discussed in the beginning of this exercise, this Spring Cloud project is using a shared configuration center. And every microservice's config file is under the `\spring-config-server\src\main\resources\shared` folder.
+
+Let's go to this config server folder and open the **account-service.yml** to define the port as below:
 
 ```yml
 server:
   port: 9300
 ```
 
-## Task5 拆分 Authoration 服务
+## Task 4. Modify the autherization service's code and add into the project
 
-认证服务，提供 token 的颁发和认证。
+After complete the **Task 3**, you have successfully remodel the Account microservice. Now in this taks, we will remodel the autherization service.
 
-### 1. 复制一个工程作为 Auth-Service，从 SpringMVC 应用中 copy 对应代码
+Different from the _account-service_, _auth-service_ is more like a non-funtioncal service, which mainly use for token and credential issue and validation. In this **Task 4**, we will integrate `Spring Security` into our auth-service.
 
-### 2. 修改 Pom.xml 增加 Sping Security 相关依赖
+### 1. Create folders under this project
+
+Similar to the Account service remodel process, we need to create `controller`,`domain` and `service` folder under **auth-service** project. But we will not copy related code from the old monolithic application.
+
+### 2. Modify the **pom.xml** to add Spring Security dependency
+
+Open the **pom.xml** under the _auth-service_ root folder. Check and add below dependency:
 
 ```xml
 <dependencies>
@@ -385,9 +398,9 @@ server:
 </dependencies>
 ```
 
-### 4. modify domain/User.java and add related packages import
+### 4. Modify **domain/User.java** and add related packages import
 
-**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/domain/User.java_**
+> **Tips**: you can copy it from the Exercise #2 completion project. `./auth-service/src/main/java/com/seattle/msready/auth/domain/User.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -452,11 +465,11 @@ return true;
 
 </details>
 
-### 5. 新建 service/ feignClient 组件和 resttemplate 调用 account-service
+### 5. Create **UserServiceClient.java** as `feign client` under /service/security/
 
-**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/UserServiceClient.java_**
+Since we are under the microservice architecture. During the authorization progress, if we need query the user's information, we need to call account-service remotely. To better call the remote services, we need to create a `feign client`. **Feign** is a declarative web service client. It makes writing web service clients easier. (https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-feign.html)
 
-需要远程调用 account-service 的用户信息，创建一个 feignClient
+> **Tips**: you can copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/service/security/UserServiceClient.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -481,9 +494,11 @@ User getUserByName(@RequestParam("username") String username);
 
 </details>
 
-### 6. 因为用户信息是存放在 account-service 服务中的，所以用户的获取需要通过 rest 替换 DB 查找所以新建一个 RestUserDetailsService
+### 6. Create a **RestUserDetailsService** under ./service/security and add `resttemplate` on **account-service**
 
-**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/RestUserDetailsService.java_**
+As the user's information is stored in the account-service, so we need to create **RestUserDetailsService** to call account-service instead of query from local database directly.
+
+> **Tips**: you can copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/service/security/RestUserDetailsService.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -515,9 +530,9 @@ public class RestUserDetailsService implements UserDetailsService {
 
 </details>
 
-### 7. 在启动类上增加 feignclient 声明@EnableFeignClients
+### 7. Add feign client declaration: @EnableFeignClients on the startup class **AuthApplication.java**
 
-**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/AuthApplication.java_**
+> **Tips**: you can copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/AuthApplication.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -543,11 +558,15 @@ SpringApplication.run(AuthApplication.class, args);
 
 </details>
 
-### 8. 修改 config/ OAuthConfig 代码
+### 8. Modify the OAuth Configration under \config folder
 
-把 OAuth2AuthorizationConfig 和 WebSecurityConfig 拷贝过来，做相应的修改
+Copy the **OAuth2AuthorizationConfig.java** and **WebSecurityConfig.java** from the monolithic applicaiton's config folder `springmvc-monolithic-application\src\main\java\com\piggymetrics\account\config` into `\auth-service\src\main\java\com\seattle\msready\auth\config`
 
-**_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java_**
+As we will use `Spring Security`, we need to make some modification on **OAuth2AuthorizationConfig.java** and **WebSecurityConfig.java**.
+
+#### WebSecurityConfig.java
+
+> **Tips**: you copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -598,7 +617,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 </details>
 
-**_tips: you copy it from ./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java_**
+#### OAuth2AuthorizationConfig.java
+
+> **Tips**: you copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -662,21 +683,28 @@ public class OAuth2AuthorizationConfig extends AuthorizationServerConfigurerAdap
 
 </details>
 
-### 9. 修改 spring config server/auth-service.yml, 增加端口定义
+### 9. Define the service port for auth-service
+
+Same to the account-service, we need to define the service port for auth-service. The config yml file is under `\spring-config-server\src\main\resources\shared\auth-service.yml`
 
 ```yml
 server:
   port: 5000
 ```
 
-## Task6 Change the configuration and modify front end code following instruction
+## Task 5. Modify the frontend resources and add into the gateway service
 
-### 1. 增加 gateway 作为前端静态资源部署（以后建议使用 ngix 部署）
+### 1. Move the frontend static resources into **gateway**
 
-把单体应用 resoucre 下的 static 目录拷贝到 gateway 的 resource 下面
+Copy the monolithic applicaiton's static resource folder `springmvc-monolithic-application\src\main\resources\static\` and files into the gateway resource path `.\gateway\src\main\resources`.
+
 ![staticResource](https://labimages.blob.core.windows.net/images/staticResource.png)
 
-### 2. 修改 Pom 增加 Spring Security 依赖
+### 2. Modify the pom.xml to add Spring Security dependency for **Gateway**
+
+Since the microservices project is using Spring Security as the authorization component, besie the auth-service, we also need to add dependency for gateway.
+
+Open the **pom.xml** under the gateway service root folder `.\gateway\pom.xml`, add below dependency:
 
 ```xml
 <dependencies>
@@ -703,11 +731,11 @@ server:
 </dependencies>
 ```
 
-### 3. 在 src/main/新建 Config 文件夹，把 ResourceServerConfig 类拷贝到 config 目录下，修改增加一些 rest 相关的 bean
+### 3. Create a Config folder under `.\gateway\src\main\java\com\seattle\msready\gateway\`，copy the **ResourceServerConfig.java** from old project and make modification
 
-因为作为 resourceServer 的 gateway 需要和认证服务远程调用，所以需要增加一些 rest 相关的 bean。
+Because the gateway will take as the Resource Server, so we need to add rest related beans to calling remote authorizaiton service.
 
-**_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java_**
+> **Tips**: you copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -768,11 +796,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 </details>
 
-### 4. 在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices.java
+### 4. Create CustomUserInfoTokenServices.java under config folder.
 
-在调用远端认证服务时，需要转发一些参数传递进入认证服务器，所以新创建一个 CustomUserInfoTokenServices
+During we call the authorization service, we also need to pass in essential properties, so we create **CustomUserInfoTokenServices.java** to doing this job.
 
-**_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/CustomUserInfoTokenServices.java_**
+> **Tips**: you can copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/config/CustomUserInfoTokenServices.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -915,9 +943,9 @@ return Collections.<String, Object>singletonMap("error",
 
 </details>
 
-### 5. 修改启动类，增加申明
+### 5. Modify the startup class **GatewayApplication.java** to add declaration.
 
-**_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java_**
+> **Tips**: you copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -942,7 +970,7 @@ SpringApplication.run(GatewayApplication.class, args);
 
 </details>
 
-### 6. 在 spring config server 的 application.yml，增加 gateway 的配置为 gateway.yaml
+### 6. Modify the **application.yml** under `.\spring-config-server\src\main\resources\application.yml`, define the gateway's security configration.
 
 ```yaml
 zuul:
@@ -987,22 +1015,28 @@ ribbon:
   ConnectTimeout: 300000
 ```
 
-## Task7 Build and run the microservices project by using Maven
+## Task 6. Build and run the microservices project by using Maven
 
 ### 1. Launch microservices in order
 
+Open `Powershell` and go to your Excercise #2 microservice project root path. Run the Maven command to build your application.
+
 ```shell
-cd C:\Ready-AZST207T\spring-cloud-example-step2\
 mvn clean install
 ```
 
-到对应服务的 target 目录下，启动对应服务
+If you could see below output, means you have built your 5 microservices.
+![Ex2-Build](https://labimages.blob.core.windows.net/images/Ex2-Build.jpg)
+
+Similar to Exercise #1, we will use the `java -jar` command to launch these microservices. What's different is that, since we have remodel to Spring Cloud microservices architecture, we need to launch these services in order:
 
 - Spring Config Server
 - Eureka-server
 - auth-service
 - account-service
 - gateway
+
+You may need to open multi powershell windows to run these command:
 
 #### Spring Config Server
 
@@ -1036,16 +1070,26 @@ java -jar .\gateway\target\gateway-1.0-SNAPSHOT.jar
 
 ### 2. Open the browser to testify the application
 
-http://localhost:4000
+Finally, after you launched these services successfully, you may open your browser to testify this microservices version application:
+As you can see from the `.\spring-config-server\src\main\resources\shared\gateway.yml`, we have defined the server port to 4000
 
-- Note: You may need to register a new account to login the application.
+```yml
+server:
+  port: 4000
+```
 
-### 3. Open the browser to check the local SpringCloud dashboard
+So in this time, you should open this url: http://localhost:4000
 
-check eureka-service
-http://localhost:5000
+> **Note**: You may need to register a new account to login the application.
 
-Best practice, add Spring-Boot Admin
+### 3. Open the browser to check the Eureka dashboard
+
+To better understand this microservice architecture, you can open the service discovery server Eureka to check these 5 services' status.
+Based on our configration, the Eureka's dashboard port is 8761 (`.\spring-config-server\src\main\resources\shared\eureka-server.yml`).
+
+So you can open this url: http://localhost:8761
+
+![Ex2-Eureka](https://labimages.blob.core.windows.net/images/Ex2-Eureka.jpg)
 
 ===
 
