@@ -56,13 +56,13 @@ If everything works well, you should see the result similar to this:
 
 ## Task3 Build and run the application, open browser to testify the webpage
 
-In this exercise, we will use the code in the **springmvc-monolithic-application** fold.
+In this exercise, we will use the code in the **springmvc-monolithic-application** folder.
 
 ```Powershell
 cd .\springmvc-monolithic-application
 ```
 
-Under this fold, we use Maven command to build the application.
+Under this folder, we use Maven command to build the application.
 
 ```Powershell
 mvn clean install
@@ -71,7 +71,7 @@ mvn clean install
 If you see the **BUILD SUCCESS** means you have built the code successfully.
 ![Ex1 Maven Build](https://labimages.blob.core.windows.net/images/Ex1-MvnBuild.jpg)
 
-After build process, the compiled files will be in the **target** fold. So before we run the application, we need to change the path to the target fold.
+After build process, the compiled files will be in the **target** folder. So before we run the application, we need to change the path to the target folder.
 
 ```Powershell
 cd .\target
@@ -105,39 +105,78 @@ Before we start the Exercise #2, let us have a look on the SpringMVC application
 As you can see, this monolithic application includes 3 parts:
 
 1. Frontend static resources
-2. Backend business logical code, include _model domain_, _controller services_ and so on.
+2. Backend business logical code, include _module domain_, _controller services_ and so on.
 3. Backend non-functional code, include _configuration_, _authorization_ and so on.
 
 And the data is stored in the memorized MongoDB.
 
-To remodel this monolithic applicaiton into microservices architecture, we should think about these 3 things:
+To remodule this monolithic applicaiton into microservices architecture, we should think about these 3 things:
 
 1. We need to depart the front-end static resources from this applicaiton
 2. For the non-functional part, which is normally the common sharing services, we need to depart and package them into independent microservices
 3. For the business related services, we need to analysis their usage and package as microserverices following their domain region. To easier this lab, we will just take the Account service as an example.
 
-To comp
+As a microservices framework, Spring Cloud includes the following core components:
 
-按照这个架构图，需要三个功能：
-1） API gateway，当做资源服务器，同时也是姿态资源服务，作为整个服务的入口。
-2） 认证服务，提供 token 的颁发和认证。
-3） 用户和账户的管理，功能性服务。
+- **API Gateway**. Single entry point for API consumers (e.g., browsers, devices, other APIs). In this lab, we will use `Zuul`, which is built to enable dynamic routing, monitoring, resiliency and security. (https://github.com/Netflix/zuul)
+- **Services Registry & Discovery**. A dynamic directory that enables client side load balancing and smart routing. In this lab, we will use `Eureka` (https://spring.io/projects/spring-cloud-netflix).
+- **Configuration Server**. A dynamic, centralized configuration management for your decentralized applications. In this lab, we use the native `Spring Cloud Config` (https://spring.io/projects/spring-cloud-config).
+- **Authorization**. Support for single sign on, token relay and token exchange. In this lab, we will use `Spring Security` (https://spring.io/projects/spring-security).
+  ![SpringCloud Arch](https://spring.io/img/homepage/diagram-distributed-systems.svg)
 
-## Task1 Replace the original code by using exercise #2 sample code.
+- Notice: Normally, the frontend static resources should be separated from the microservices applicaiton. To easier this lab's process, we will just deploy the static resource in the gateway service. _We do not recommend you to do this in the real case_.
 
-### 打开 Ex2 的脚手架文件作为初始框架，以后可以从 Spring.io 生成脚手架工程。
+This remodule excercise will include 6 tasks:
 
-## Task2 配置 Parent Pom.xml 增加 function model
+1. Open the microservices quickstart project and define modules
+2. Modify the application.yml and shared configration
+3. Modify the account service's code and add into the microservices project
+4. Modify the autherization service's code and add into the project
+5. Modify the frontend resources and add into the gateway service
+6. Build and run the microservices project.
 
-### 1. 由于功能模块变多，使用同一的 parent 来指定 maven 依赖版本和共同依赖组件。
+## Task1 Open the microservices quickstart project and define modules
 
-功能如下：
+Please go to the **Exercise 2** folder, use **Visual Studio Code** to open the project folder.
+
+```Powershell
+code .
+```
+
+In this lab, we have provide a quickstart microservice project to use. It has pre-configed the core Spring Cloud non-function module include: `Gateway`, `Eureka`, `Config Server` and two empty service project `account-service` and `auth-service`. In the real case, you can use Spring Boot to initialize your microservice project.
+
+```
+│ pom.xml
+├─account-service
+├─auth-service
+├─eureka-server
+├─gateway
+└─spring-config-server
+    │  pom.xml
+    └─src
+        └─main
+            ├─java
+            └─resources
+                │  application.yml
+                └─shared
+                        account-service.yml
+                        application.yml
+                        auth-service.yml
+                        eureka-server.yml
+                        gateway.yml
+```
+
+If you open the **AccountApplication.java** under the .\account-service\src\main\java\com\seattle\msready\account\, you may notice that the annotation has been change to `SpringCloud` instead of `SpringBoot`.
+
 ![springCloudExampleProjects](https://labimages.blob.core.windows.net/images/springCloudExampleProjects.png)
-Notice：这里的 annotation 是 SpringCloud，不是 SpringBoot 了
 
-### 2. parent pom
+### 1. First, we need to modify the parent **Pom.xml** to define the function modules
 
-属性执行和版本规定：
+Open the parent **Pom.xml**, under the **root of this project folder**. As we change to microservice architecture, we need to use the parent Pom.xml to define the denpendence component and their version.
+
+In this quickstart project, we have configured the dependence for you. You may have a look on what we have changed.
+
+[1] Define framework and the version：
 
 ```xml
 <properties>
@@ -159,7 +198,7 @@ Notice：这里的 annotation 是 SpringCloud，不是 SpringBoot 了
 </dependencyManagement>
 ```
 
-### 3. 公共依赖：
+[2] Add public dependence components
 
 ```xml
 <dependencies>
@@ -187,7 +226,7 @@ Notice：这里的 annotation 是 SpringCloud，不是 SpringBoot 了
 </dependencies>
 ```
 
-### 4. 定义功能模块
+[3] Define the modules
 
 ```xml
 <modules>
@@ -199,11 +238,11 @@ Notice：这里的 annotation 是 SpringCloud，不是 SpringBoot 了
 </modules>
 ```
 
-## Task3 增加共同配置，增加 application.yml
+## Task2 Modify the application.yml and shared configration
 
-```Powershell
-cd .\spring-config-server\resources\
-```
+In the Spring Cloud microservices architecture, we will use shared config server to manage modules' configuration.
+
+Go to the \spring-config-server\resources\ Path, and try to modify the **application.yml** as following:
 
 ```yml
 logging:
@@ -237,30 +276,17 @@ management: #actuator
         include: "*"
 ```
 
-- 非功能模块介绍
+In the **shared** folder, you may find the modules configuration file. Some of them, especially the non-functional modules, we have configured for you. In these yml file, we have defined the service port and authorazition method.
 
-1. 因为是微服务，如果要跑起来最少需要一个服务注册发现。所以在进行拆分之前我们先引入 eureka。
-   **请参照 eureka 的说明**
+## Task3 Modify the account service's code and add into the microservices project
 
-2. 为了集中配置，我们也使用了 springconfig
-   **请参照 Spring cloud server 的说明**
-
-3. 为了提供统一的认证和服务流量转发，我们使用 spring cloud zuul 作为网关
-   **请参照 spring cloud zuul 说明**
-
-4. 在拆分之前，我们也要稍微了解一下 spring security 相关知识
-   **请参照 spring security 说明**
-
-## Task4 拆分 Account-Service：
+Spring Boot is the starting point for building all Spring-based applications. Spring Boot is designed to get you up and running as quickly as possible, with minimal upfront configuration of Spring.
 
 用 account-service 作为例子，业务比较简单就是用户注册登陆以及转户数据的记录与统计展示。
 
 - 注册用户
-  ![createUserAndAccount](https://labimages.blob.core.windows.net/images/createUserAndAccount.gif)
 - 创建账户信息
-  ![createAccountInfo](https://labimages.blob.core.windows.net/images/createAccountInfo.gif)
 - 登出与登录
-  ![logoutAndLogin](https://labimages.blob.core.windows.net/images/logoutAndLogin.gif)
 
 在这个例子里面，为了简单和减少依赖性，使用的 mongoDB 的内存数据库。包括配置和 token 等，都使用内存存储。
 
@@ -364,7 +390,7 @@ server:
 **_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/domain/User.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.auth.domain;
 
@@ -433,7 +459,7 @@ return true;
 需要远程调用 account-service 的用户信息，创建一个 feignClient
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.auth.service.security;
 import com.seattle.msready.auth.domain.User;
@@ -460,7 +486,7 @@ User getUserByName(@RequestParam("username") String username);
 **_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/service/security/RestUserDetailsService.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.auth.service.security;
 
@@ -494,7 +520,7 @@ public class RestUserDetailsService implements UserDetailsService {
 **_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/AuthApplication.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.auth;
 
@@ -524,7 +550,7 @@ SpringApplication.run(AuthApplication.class, args);
 **_tips: you copy it from ./spring-cloud-example-step2/auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.auth.config;
 
@@ -575,7 +601,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 **_tips: you copy it from ./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.auth.config;
 
@@ -684,7 +710,7 @@ server:
 **_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.gateway.config;
 
@@ -749,7 +775,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 **_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/config/CustomUserInfoTokenServices.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.gateway.config;
 
@@ -894,7 +920,7 @@ return Collections.<String, Object>singletonMap("error",
 **_tips: you copy it from ./spring-cloud-example-step2/gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java_**
 
 <details>
-<summary><mark><font color=darkred>source code</font></mark></summary>
+<summary><font>source code</font></summary>
 <pre><code> 
 package com.seattle.msready.gateway;
 
@@ -1020,6 +1046,8 @@ check eureka-service
 http://localhost:5000
 
 Best practice, add Spring-Boot Admin
+
+===
 
 # Exercise #3 Deploy to Azure Spring Cloud
 
