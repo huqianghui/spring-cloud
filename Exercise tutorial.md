@@ -18,11 +18,11 @@ Basiclly, the LODS provide you a virtual machince which has been pre-configured 
 - Once you launch the LODS, you may find the Azure account under the left resource tab.
 
 1. Login with your Microsoft AAD account
-   ![LODS Login](./images/pre-LODSLogin.jpg)
+   ![LODS Login](https://labimages.blob.core.windows.net/images/pre-LODSLogin.jpg)
 2. Launch LODS VM environment
-   ![LODS Launch](./images/pre-LODSLaunch.jpg)
+   ![LODS Launch](https://labimages.blob.core.windows.net/images/pre-LODSLaunch.jpg)
 3. Once your VM is ready, you may find the VM login account and a free Azure account under resource tab.
-   ![LODS Resource](./images/pre-LODSResource.jpg)
+   ![LODS Resource](https://labimages.blob.core.windows.net/images/pre-LODSResource.jpg)
 
 - Notice: You cannot copy any text from outside into the VM directly. But you can click the T buttun left to the text to input into the VM.
 
@@ -35,7 +35,7 @@ Basiclly, the LODS provide you a virtual machince which has been pre-configured 
 Press Win+R to open the command run widows, and input **Powershell** to open the terminal windows.
 
 - Notice: If you are using the LODS VM, you can use the top-left **Flash** button to send the Win+R command.
-  ![LODS WinR](./images/Ex1-WinR.jpg)
+  ![LODS WinR](https://labimages.blob.core.windows.net/images/Ex1-WinR.jpg)
 
 Input the follwing command to check your environment's ready status.
 
@@ -48,7 +48,7 @@ mvn -version
 ```
 
 If everything works well, you should see the result similar to this:
-![Environment check](./images/Ex1-EnvCheck.jpg)
+![Environment check](https://labimages.blob.core.windows.net/images/Ex1-EnvCheck.jpg)
 
 - Notice: If you cannot use the _mvn_ command, following this link to install Maven and config the system environment variable path: https://maven.apache.org/install.html
 
@@ -69,7 +69,7 @@ mvn clean install
 ```
 
 If you see the **BUILD SUCCESS** means you have built the code successfully.
-![Ex1 Maven Build](./images/Ex1-MvnBuild.jpg)
+![Ex1 Maven Build](https://labimages.blob.core.windows.net/images/Ex1-MvnBuild.jpg)
 
 After build process, the compiled files will be in the **target** fold. So before we run the application, we need to change the path to the target fold.
 
@@ -84,10 +84,10 @@ java -jar .\springmvc-monolithic-application-1.0-SNAPSHOT.jar
 ```
 
 When you see below output, means your applicaiton has launched successfully.
-![Ex1-AppRun](./images/Ex1-AppRun.jpg)
+![Ex1-AppRun](https://labimages.blob.core.windows.net/images/Ex1-AppRun.jpg)
 
 You may notice the applicaiton's port is _10000_. So open your browers, and open http://localhost:10000 to testify your applicaiton.
-![Ex1-AppScreen](./images/Ex1-AppScreen.jpg)
+![Ex1-AppScreen](https://labimages.blob.core.windows.net/images/Ex1-AppScreen.jpg)
 
 Now, just create a new account to try this applicaiton and analysis its functions.
 
@@ -99,35 +99,29 @@ Now, just create a new account to try this applicaiton and analysis its function
 
 # Exercise #2 Remode the SpringMVC app to SpringCloud
 
-从现在工程来展示这个业务可以分成三部分：
+Before we start the Exercise #2, let us have a look on the SpringMVC application code structure.
+![code structure](https://labimages.blob.core.windows.net/images/codeStructure.png)
 
-- 1.前端页面，负责展示部分
-- 2.账户信息管理
-- 3.非功能性，用户登陆与注册，认证等。
+As you can see, this monolithic application includes 3 parts:
 
-![code structure](./images/codeStructure.png)
+1. Frontend static resources
+2. Backend business logical code, include _model domain_, _controller services_ and so on.
+3. Backend non-functional code, include _configuration_, _authorization_ and so on.
 
-- 如图是在一个真实的逻辑场景架构图：
+And the data is stored in the memorized MongoDB.
 
-![realWorldFrameworkDesignPicture](./images/realWorldFrameworkDesignPicture.png)
+To remodel this monolithic applicaiton into microservices architecture, we should think about these 3 things:
 
-在这个实际例子里面，我们主要做到如下两步：
+1. We need to depart the front-end static resources from this applicaiton
+2. For the non-functional part, which is normally the common sharing services, we need to depart and package them into independent microservices
+3. For the business related services, we need to analysis their usage and package as microserverices following their domain region. To easier this lab, we will just take the Account service as an example.
 
-1） 做到前后端分离，把静态资源剥离出来，单独存放与发布
-
-2） 把用户认证这个非功能性功能单独剥离出来，实现 SSO 等。
-
-3） 剩下的用户和账户信息的管理维护作为一个服务。
-
-如下图实现一个最简单，基于 spring cloud 的微服务体系。
-![studyFrameworkDesignPicture](./images/studyFrameworkDesignPicture.png)
+To comp
 
 按照这个架构图，需要三个功能：
 1） API gateway，当做资源服务器，同时也是姿态资源服务，作为整个服务的入口。
 2） 认证服务，提供 token 的颁发和认证。
 3） 用户和账户的管理，功能性服务。
-
-这里提供了三个模板工程，看怎么一步步实现拆分。
 
 ## Task1 Replace the original code by using exercise #2 sample code.
 
@@ -138,7 +132,7 @@ Now, just create a new account to try this applicaiton and analysis its function
 ### 1. 由于功能模块变多，使用同一的 parent 来指定 maven 依赖版本和共同依赖组件。
 
 功能如下：
-![springCloudExampleProjects](./images/springCloudExampleProjects.png)
+![springCloudExampleProjects](https://labimages.blob.core.windows.net/images/springCloudExampleProjects.png)
 Notice：这里的 annotation 是 SpringCloud，不是 SpringBoot 了
 
 ### 2. parent pom
@@ -262,11 +256,11 @@ management: #actuator
 用 account-service 作为例子，业务比较简单就是用户注册登陆以及转户数据的记录与统计展示。
 
 - 注册用户
-  ![createUserAndAccount](./images/createUserAndAccount.gif)
+  ![createUserAndAccount](https://labimages.blob.core.windows.net/images/createUserAndAccount.gif)
 - 创建账户信息
-  ![createAccountInfo](./images/createAccountInfo.gif)
+  ![createAccountInfo](https://labimages.blob.core.windows.net/images/createAccountInfo.gif)
 - 登出与登录
-  ![logoutAndLogin](./images/logoutAndLogin.gif)
+  ![logoutAndLogin](https://labimages.blob.core.windows.net/images/logoutAndLogin.gif)
 
 在这个例子里面，为了简单和减少依赖性，使用的 mongoDB 的内存数据库。包括配置和 token 等，都使用内存存储。
 
@@ -275,7 +269,7 @@ management: #actuator
 用户和账户服务的把 config 配置信息和 security 信息去掉，其余的全部拷贝到目录下面去掉。
 但是需要修改所有的 namespace。最后结果如下图：
 
-![accountServiceCodeStructure](./images/accountServiceCodeStructure.png)
+![accountServiceCodeStructure](https://labimages.blob.core.windows.net/images/accountServiceCodeStructure.png)
 
 ### 2. 修改 pom.xml, maven 依赖中增加内存 mongoDB 相关的依赖
 
@@ -654,7 +648,7 @@ server:
 ### 1. 增加 gateway 作为前端静态资源部署（以后建议使用 ngix 部署）
 
 把单体应用 resoucre 下的 static 目录拷贝到 gateway 的 resource 下面
-![staticResource](./images/staticResource.png)
+![staticResource](https://labimages.blob.core.windows.net/images/staticResource.png)
 
 ### 2. 修改 Pom 增加 Spring Security 依赖
 
@@ -987,68 +981,43 @@ mvn clean install
 #### Spring Config Server
 
 ```shell
-cd C:\Ready-AZST207T\spring-cloud-example-step2\
-cd .\spring-config-server\target\
-```
-
-```shell
-java -jar spring-config-server-1.0.0-SNAPSHOT.jar
+java -jar .\spring-config-server\target\spring-config-server-1.0.0-SNAPSHOT.jar
 ```
 
 #### Eureka-server
 
 ```shell
-cd C:\Ready-AZST207T\spring-cloud-example-step2\
-cd .\eureka-server\target\
-```
-
-```shell
-java -jar eureka-server-0.0.1-SNAPSHOT.jar
+java -jar .\eureka-server\target\eureka-server-0.0.1-SNAPSHOT.jar
 ```
 
 #### auth-service
 
 ```shell
-cd C:\Ready-AZST207T\spring-cloud-example-step2\
-cd .\auth-service\target\
-```
-
-```shell
-java -jar auth-service-1.0-SNAPSHOT.jar
+java -jar .\auth-service\target\auth-service-1.0-SNAPSHOT.jar
 ```
 
 #### account-service
 
 ```shell
-cd C:\Ready-AZST207T\spring-cloud-example-step2\
-cd .\account-service\target\
-```
-
-```shell
-java -jar account-service-1.0-SNAPSHOT.jar
+java -jar .\account-service\target\account-service-1.0-SNAPSHOT.jar
 ```
 
 #### gateway
 
 ```shell
-cd C:\Ready-AZST207T\spring-cloud-example-step2\
-cd .\gateway\target\
-```
-
-```shell
-java -jar gateway-1.0-SNAPSHOT.jar
+java -jar .\gateway\target\gateway-1.0-SNAPSHOT.jar
 ```
 
 ### 2. Open the browser to testify the application
 
-localhost:4000
+http://localhost:4000
 
 - Note: You may need to register a new account to login the application.
 
 ### 3. Open the browser to check the local SpringCloud dashboard
 
 check eureka-service
-localhost:
+http://localhost:5000
 
 Best practice, add Spring-Boot Admin
 
@@ -1075,7 +1044,7 @@ add below dependecy on the parent pom file
 
 Remove the spring-config-server and eureka-server modules.
 
-![deleteBelowTwoModules](./images/deleteTwoModule.png)
+![deleteBelowTwoModules](https://labimages.blob.core.windows.net/images/deleteTwoModule.png)
 
 **\*rebuild and install all the maven projects**
 
@@ -1109,18 +1078,18 @@ az extension add --name spring-cloud
 
 - [Click here](https://portal.azure.com/?WT.mc_id=azurespringcloud-github-judubois&microsoft_azure_marketplace_ItemHideKey=AppPlatformExtension#blade/Microsoft_Azure_Marketplace/MarketplaceOffersBlade/selectedMenuItemId/home/searchQuery/spring%20cloud) to access the cluster creation page.
 
-![Cluster creation](media/01-create-azure-spring-cloud.png)
+![Cluster creation](https://labimages.blob.core.windows.net/images/01-create-azure-spring-cloud.png)
 
 - Click on "Azure Spring Cloud" and then on "Create".
 - Select your subscription, resource group name, name of the service and location.
 
-![Cluster configuration](./images/createAzureSpringCloudDetail.png)
+![Cluster configuration](https://labimages.blob.core.windows.net/images/createAzureSpringCloudDetail.png)
 
 - Click on "Next : Diagnostic Setting" to go to the next screen.
 - Here you can either select an existing "Log Analytics workspace" or create a new one. Create a new one, and we will configure it later in [Configure application logs](../03-configure-application-logs/README.md).
 - It cost much time.
 
-![disableTrace](./images/disableTrace.png)
+![disableTrace](https://labimages.blob.core.windows.net/images/disableTrace.png)
 
 - Once everything is validated, the cluster can be created.
 
@@ -1140,8 +1109,7 @@ az configure --defaults spring-cloud=<service instance name>
 ### Configure Azure Spring Cloud to access the Git repository
 
 - Go to the [the Azure portal](https://portal.azure.com/?WT.mc_id=azurespringcloud-github-judubois).
-- remove eureka server config information.
-- remove application name and server port configurations.
+
 - Go to the overview page of your Azure Spring Cloud server, and select "Config server" in the menu
 - Configure the repository we previously created:
   - Add the repository URL, for example `https://github.com/huqianghui/azure-spring-cloud-demo-config.git`
@@ -1149,15 +1117,15 @@ az configure --defaults spring-cloud=<service instance name>
 - Click on "Apply" and wait for the operation to succeeed
 - Upload the config files to the github server. Here we just use the github as spring cloud's storage repostory.
 
-![Spring Cloud config server](./images/configGitServer.png)
+![Spring Cloud config server](https://labimages.blob.core.windows.net/images/configGitServer.png)
 
 ### push all config file to the git server.
 
-![gitRepositoryConfigFiles](./images/configFiles.png)
+![gitRepositoryConfigFiles](https://labimages.blob.core.windows.net/images/configFiles.png)
 
 ### deploy local spring cloud applitions to azure spring cloud.
 
-![creatApps](./images/createTheThreeApps.png)
+![creatApps](https://labimages.blob.core.windows.net/images/createTheThreeApps.png)
 
 You can now send the project jars to Azure Spring Cloud:
 
@@ -1170,7 +1138,7 @@ az spring-cloud app deploy -n auth-service --jar-path ./auth-service/target/auth
 
 ```
 
-![azureSpringCloudDeployment](./images/azureSpringCloudDeployment.png)
+![azureSpringCloudDeployment](https://labimages.blob.core.windows.net/images/azureSpringCloudDeployment.png)
 
 6. Modify front-end configuration and deploy to Azure Website.
 7. Open the browser to testify the application
@@ -1188,10 +1156,10 @@ Go to [the Azure portal](https://portal.azure.com/?WT.mc_id=azurespringcloud-git
 It takes a few minutes to finish deploying the applications. To confirm that they have deployed, go to the Apps blade in the Azure portal. You should see a line each of the three applications.
 
 - assign url to auth-server
-  ![assignUrl](./images/assignAuthUrl.png)
+  ![assignUrl](https://labimages.blob.core.windows.net/images/assignAuthUrl.png)
 
 - change the auth server address in the gateway.application
-  ![changeAuthConfig](./images/changeAuthServerConfig.png)
+  ![changeAuthConfig](https://labimages.blob.core.windows.net/images/changeAuthServerConfig.png)
 
 - truobe-shooting: If you enable the diagnostic, you can watch the application log.
 
@@ -1206,8 +1174,8 @@ AppPlatformLogsforSpring
 
 - monitor the app status, if they are running, then you can test it.
 
-![appsStatus](./images/appsStatus.png)
+![appsStatus](https://labimages.blob.core.windows.net/images/appsStatus.png)
 
 - Assign a public endpoint to the gateway
 
-![appsStatus](./images/testPoint.png)
+![appsStatus](https://labimages.blob.core.windows.net/images/testPoint.png)
