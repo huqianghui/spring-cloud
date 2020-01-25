@@ -309,9 +309,11 @@ By complete this step, your account service project should looks like below:
 
 ### 2. Modify the microservice's pom.xml
 
-In the old monolithic application, we use the memorized MongoDB as the datebase. After we depart the app into microservices, we need to config each microservice have access to the DB. So we need to modify each pom.xml of microservices to add MongoDB dependence.
+In the old monolithic application, we use the memorized MongoDB as the datebase. After we depart the app into microservices, we need to config the microservice has access to DB. In this lab, `account-service` need to store and query Account information in database. So we need to modify the pom.xml of `account-service` microservice to add MongoDB dependence.
 
-Open the **pom.xml** under the _account-service_ root folder. Check and modify to add dependencies as below:
+> **Notice** In this lab, other microservices like `Eureka`, `Auth-service`, `Gateway` and `Config Server` do not need store their data in the Database. Think about why and how can they access data.
+
+Open the **pom.xml** under the `account-service` root folder. Check and modify to add dependencies as below:
 
 ```xml
 <profiles>
@@ -570,7 +572,7 @@ As we will use `Spring Security`, we need to make some modification on **OAuth2A
 
 #### WebSecurityConfig.java
 
-> **Tips**: you copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java`
+> **Tips**: you can copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/config/WebSecurityConfig.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -623,7 +625,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 #### OAuth2AuthorizationConfig.java
 
-> **Tips**: you copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java`
+> **Tips**: you can copy it from the Exercise #2 completion project `./auth-service/src/main/java/com/seattle/msready/auth/config/OAuth2AuthorizationConfig.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -739,7 +741,7 @@ Open the **pom.xml** under the gateway service root folder `.\gateway\pom.xml`, 
 
 Because the gateway will take as the Resource Server, so we need to add rest related beans to calling remote authorizaiton service.
 
-> **Tips**: you copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java`
+> **Tips**: you can copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/config/ResourceServerConfig.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -949,7 +951,7 @@ return Collections.<String, Object>singletonMap("error",
 
 ### 5. Modify the startup class **GatewayApplication.java** to add declaration.
 
-> **Tips**: you copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java`
+> **Tips**: you can copy it from the Exercise #2 completion project `./gateway/src/main/java/com/seattle/msready/gateway/GatewayApplication.java`
 
 <details>
 <summary><font>source code</font></summary>
@@ -1102,7 +1104,7 @@ So you can open this url: http://localhost:8761
 Build a Spring Boot microservice that is cloud-enabled:
 it uses a Spring Cloud Service Registry and a Spring Cloud Config Server which are both managed and supported by Azure Spring Cloud.
 
-## Task1 Modify code for Azure Spring Cloud
+## Task 1. Modify code for Azure Spring Cloud
 
 ### 1. add azure spring cloud maven dependency
 
@@ -1116,7 +1118,7 @@ add below dependecy on the parent pom file
 </dependency>
 ```
 
-### 2. Delete the eureka server and original config server code but keep the config files in the shared folder(./spring-cloud-example-step2/spring-config-server/src/main/resources/shared)
+### 2. Delete the eureka server and original config server code but keep the config files in the shared folder: './spring-config-server/src/main/resources/shared'
 
 Remove the spring-config-server and eureka-server modules.
 
@@ -1124,15 +1126,15 @@ Remove the spring-config-server and eureka-server modules.
 
 ### 3. Delete the server port and application name config in the config files
 
-Because the below config files just have the server port configuration,so you can delete them, or just left blank.
+Because the below config files just have the server port configuration, so you can delete them, or just left blank.
 
-./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/account-service.yml
+`./spring-config-server/src/main/resources/shared/account-service.yml`
 
-./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/auth-service.yml
+`./spring-config-server/src/main/resources/shared/auth-service.yml`
 
 In the below config file
 
-./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/application.yml 
+`./spring-config-server/src/main/resources/shared/application.yml`
 
 the eureka config should be removed.
 
@@ -1165,29 +1167,29 @@ management: #actuator
 
 In the config file
 
-./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/gateway.yml
+`./spring-config-server/src/main/resources/shared/gateway.yml`
 
-the server port also be be deleted.And the Auth server Url will be changed later.
+the server port also need to be deleted. And the Auth server Url will be changed later.
 
 The code as below:
 
 ```yaml
 zuul:
-  ignoredServices: '*'
+  ignoredServices: "*"
   host:
     connect-timeout-millis: 300000
     socket-timeout-millis: 300000
   routes:
     auth-service:
-        path: /oauth/**
-        serviceId: auth-service
-        stripPrefix: false
-        sensitiveHeaders:
+      path: /oauth/**
+      serviceId: auth-service
+      stripPrefix: false
+      sensitiveHeaders:
     account-service:
-        path: /accounts/**
-        serviceId: account-service
-        stripPrefix: false
-        sensitiveHeaders:
+      path: /accounts/**
+      serviceId: account-service
+      stripPrefix: false
+      sensitiveHeaders:
 security:
   oauth2:
     client:
@@ -1211,11 +1213,15 @@ ribbon:
   ConnectTimeout: 300000
 ```
 
-**Notes**:  if the micro-service application name which you have config in the *-service/src/main/resources/application.yml is diffrent from the name you would config in the azure, then you should delete it. If they are same,you can keep it.
+> **Notes**: If the micro-service application name which you have config in the \*-service/src/main/resources/application.yml is diffrent from the name you would config in the azure, then you should delete it. If they are same,you can keep it.
 
-**\*rebuild and install all the maven projects**
+**Go to the exercise root folder, rebuild and install all the maven projects**
 
-## Task2. Create Azure SpringCloud
+```Powershell
+mvn clean install
+```
+
+## Task 2. Create Azure SpringCloud
 
 Log in to your account:
 
@@ -1271,7 +1277,7 @@ az configure --defaults group=<resource group name>
 az configure --defaults spring-cloud=<service instance name>
 ```
 
-## Task3. Deploy services Jar to Azure SpringCloud by using Azure CLI
+## Task 3. Deploy services Jar to Azure SpringCloud by using Azure CLI
 
 ### Configure Azure Spring Cloud to access the Git repository
 
@@ -1279,7 +1285,8 @@ az configure --defaults spring-cloud=<service instance name>
 
 - Go to the overview page of your Azure Spring Cloud server, and select "Config server" in the menu
 - Configure the repository we previously created:
-  - Add the repository URL, for example `https://github.com/huqianghui/azure-spring-cloud-demo-config.git`
+  - Go to 'https://github.com/huqianghui/azure-spring-cloud-demo-config' and **fork** to your own repository.
+  - Add your **own** repository URL, for example `https://github.com/huqianghui/azure-spring-cloud-demo-config.git`
   - Click on `Authentication` and select `public`
 - Click on "Apply" and wait for the operation to succeeed
 - Upload the config files to the github server. Here we just use the github as spring cloud's storage repostory.
