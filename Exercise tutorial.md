@@ -1122,7 +1122,7 @@ Remove the spring-config-server and eureka-server modules.
 
 ![deleteBelowTwoModules](https://labimages.blob.core.windows.net/images/deleteTwoModule.png)
 
-### 3. Delete the server port and application name config in the config files.
+### 3. Delete the server port and application name config in the config files
 
 Because the below config files just have the server port configuration,so you can delete them, or just left blank.
 
@@ -1211,7 +1211,7 @@ ribbon:
   ConnectTimeout: 300000
 ```
 
-***tips: if the micro-service application name which you have config in the *-service/src/main/resources/application.yml is diffrent from the name you would config in the azure, then you should delete it. If they are same,you can keep it. ***
+**Notes**:  if the micro-service application name which you have config in the *-service/src/main/resources/application.yml is diffrent from the name you would config in the azure, then you should delete it. If they are same,you can keep it.
 
 **\*rebuild and install all the maven projects**
 
