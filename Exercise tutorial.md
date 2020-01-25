@@ -1125,12 +1125,18 @@ Remove the spring-config-server and eureka-server modules.
 ### 3. Delete the server port and application name config in the config files.
 
 Because the below config files just have the server port configuration,so you can delete them, or just left blank.
+
 ./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/account-service.yml
+
 ./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/auth-service.yml
 
-In the ./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/application.yml config file, the eureka config should be removed.
+In the below config file
 
-Config code as below:
+./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/application.yml 
+
+the eureka config should be removed.
+
+The config code as below:
 
 ```yaml
 logging:
@@ -1157,8 +1163,11 @@ management: #actuator
         include: "*"
 ```
 
-In the config file ./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/gateway.yml, the server port also be be deleted.
-And the Auth server Url will be changed later.
+In the config file
+
+./spring-cloud-example-step2/spring-config-server/src/main/resources/shared/gateway.yml
+
+the server port also be be deleted.And the Auth server Url will be changed later.
 
 The code as below:
 
