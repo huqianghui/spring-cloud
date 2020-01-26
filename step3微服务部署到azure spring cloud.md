@@ -5,7 +5,7 @@ it uses a Spring Cloud Service Registry and a Spring Cloud Config Server which a
 
 ## add azure spring cloud maven dependency
 
-add below dependecy on the parent pom file,and remove the spring-config-server and eureka-server modules.
+### 1. add below dependecy on the parent pom file,and remove the spring-config-server and eureka-server modules.
 
 ```xml
 <dependency>
@@ -16,6 +16,105 @@ add below dependecy on the parent pom file,and remove the spring-config-server a
 ```
 
 ![deleteBelowTwoModules](./images/deleteTwoModule.png)
+
+### 2. Delete the eureka server and original config server code but keep the config files in the shared folder: './spring-config-server/src/main/resources/shared'
+
+Remove the spring-config-server and eureka-server modules.
+
+![deleteBelowTwoModules](https://labimages.blob.core.windows.net/images/deleteTwoModule.png)
+
+### 3. Delete the server port and application name config in the config files
+
+Because the below config files just have the server port configuration, so you can delete them, or just left blank.
+
+`./spring-config-server/src/main/resources/shared/account-service.yml`
+
+`./spring-config-server/src/main/resources/shared/auth-service.yml`
+
+In the below config file
+
+`./spring-config-server/src/main/resources/shared/application.yml`
+
+the eureka config should be removed.
+
+The config code as below:
+
+```yaml
+logging:
+  level:
+    org.springframework.security: INFO
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 300000
+
+feign:
+  hystrix:
+    enabled: true
+
+management: #actuator
+  endpoints:
+    enable: true
+    web:
+      exposure:
+        include: "*"
+```
+
+In the config file
+
+`./spring-config-server/src/main/resources/shared/gateway.yml`
+
+the server port also need to be deleted. And the Auth server Url will be changed later.
+
+The code as below:
+
+```yaml
+zuul:
+  ignoredServices: "*"
+  host:
+    connect-timeout-millis: 300000
+    socket-timeout-millis: 300000
+  routes:
+    auth-service:
+      path: /oauth/**
+      serviceId: auth-service
+      stripPrefix: false
+      sensitiveHeaders:
+    account-service:
+      path: /accounts/**
+      serviceId: account-service
+      stripPrefix: false
+      sensitiveHeaders:
+security:
+  oauth2:
+    client:
+      clientId: gateway
+      accessTokenUri: http://localhost:5000/oauth/token
+      grant-type: client_credentials
+      scope: server
+    resource:
+      user-info-uri: http://localhost:5000/users/current
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 300000
+
+ribbon:
+  ReadTimeout: 300000
+  ConnectTimeout: 300000
+```
+
+> **Notes**: If the micro-service application name which you have config in the \*-service/src/main/resources/application.yml is diffrent from the name you would config in the azure, then you should delete it. If they are same,you can keep it.
+
+**Go to the exercise root folder, rebuild and install all the maven projects**
 
 ***rebuild and install all the maven projects**
 
