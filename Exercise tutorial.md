@@ -12,7 +12,7 @@ You can complete this lab use your own environment. Please make sure your have a
 
 ## You can also use the LODS VM as the lab environment.
 
-Basiclly, the LODS provide you a virtual machince which has been pre-configured with development environment. And if you do not have your own Azure subscription, the LODS also provide a free Azure subscription for _one-time_ use, which will be expired after 8 hours or you finish your lab.
+Basically, the LODS provide you a virtual machince which has been pre-configured with development environment. And if you do not have your own Azure subscription, the LODS also provide a free Azure subscription for _one-time_ use, which will be expired after 8 hours or you finish your lab.
 
 - LODS link: https://labondemand.com/LabProfile/62620
 - Once you launch the LODS, you may find the Azure account under the left resource tab.
@@ -142,7 +142,7 @@ This remodule excercise will include 6 tasks:
 
 ## Task 1. Open the microservices quickstart project and define modules
 
-Please go to the **Exercise 2** folder, use **Visual Studio Code** to open the project folder.
+Please go to the **Exercise 2** folder (There is no such folder, which one to open?), use **Visual Studio Code** to open the project folder.
 
 ```Powershell
 code .
