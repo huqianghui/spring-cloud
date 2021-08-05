@@ -15,8 +15,6 @@ it uses a Spring Cloud Service Registry and a Spring Cloud Config Server which a
 </dependency>
 ```
 
-![deleteBelowTwoModules](./images/deleteTwoModule.png)
-
 ### 2. Delete the eureka server and original config server code but keep the config files in the shared folder: './spring-config-server/src/main/resources/shared'
 
 Remove the spring-config-server and eureka-server modules.
