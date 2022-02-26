@@ -23,12 +23,12 @@ spring cloud config server本身也是一个微服务，跟其它的微服务一
 
 ![springConfigGitSeq](./images/springConfigGitSeq.png)
 
-### Eureka Server提供的restful服务
+### config Server提供的restful服务
 
 Eureka Server就是提供了一些的endpoint，使用springMVC的controller--EnvironmentController来提供服务
 ![EnvironmentController](./images/EnvironmentController.png)
 
-### Eureka Server使用的数据维度
+### config Server使用的数据维度
 
 1. 应用名称
 2. profile，可以看做环境分类：Dev， Test 等
